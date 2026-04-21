@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title>Đăng Ký - Duy Movie</title>
+        <style>
+            .login-box {
+                max-width: 450px;
+                margin: 50px auto;
+            }
+        </style>
+</head>
+<body class="bg-dark">
+    <%- include('partials/header') %>
+
+        <div class="container">
+            <div class="login-box card bg-secondary text-white p-4 shadow-lg border-0">
+                <h3 class="text-center fw-bold mb-4">TẠO TÀI KHOẢN</h3>
+                <form id="register-form">
+                    <div class="mb-3">
+                        <label class="form-label">Họ và Tên</label>
+                        <input type="text" id="reg-fullname" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <input type="text" id="reg-username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu</label>
+                        <input type="password" id="reg-password" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text" id="reg-phone" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="reg-email" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100 fw-bold mt-2">ĐĂNG KÝ NGAY</button>
+                </form>
+                <div class="text-center mt-3 small">
+                    Đã có tài khoản? <a href="/login" class="text-warning text-decoration-none">Đăng nhập</a>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+        <script src="/js/register.js"></script>
+</body>
+
+</html>

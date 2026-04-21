@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <link rel="stylesheet" href="/css/lichsu.css">
+        <title>Hóa Đơn Của Tôi - CinéHub</title>
+</head>
+
+<body class="bg-dark text-white">
+    <%- include('partials/header') %>
+
+        <div class="container mt-5 mb-5" style="min-height: 60vh;">
+            <% if (typeof lichSu==='undefined' || lichSu===null) { %>
+                <div class="text-center py-5">
+                    <div class="spinner-border text-danger"></div>
+                    <p class="mt-3 text-light">Đang tải dữ liệu hóa đơn...</p>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const user = JSON.parse(localStorage.getItem('user')) || window.currentUser;
+                        // Hỗ trợ cả ID MongoDB (_id) và SQL (MA_NGUOI_DUNG)
+                        const userId = user ? (user._id || user.MA_NGUOI_DUNG) : null;
+
+                        if (userId) {
+                            window.location.href = `/lich-su?maND=${userId}`;
+                        } else {
+                            alert("Vui lòng đăng nhập để xem lịch sử!");
+                            window.location.href = '/login';
+                        }
+                    });
+                </script>
+                <% } else { %>
+                    <h2 class="text-danger fw-bold mb-4"><i class="bi bi-receipt"></i> HÓA ĐƠN CỦA TÔI</h2>
+
+                    <% if (lichSu.length===0) { %>
+                        <div class="text-center py-5 rounded-3 border border-secondary shadow-sm"
+                            style="background: #2a2a2a;">
+                            <i class="bi bi-receipt text-secondary" style="font-size: 4rem;"></i>
+                            <h4 class="mt-3 text-white">Bạn chưa có hóa đơn nào!</h4>
+                            <p class="text-light-gray">Hiện tại bạn chưa thực hiện giao dịch nào trên CinéHub.</p>
+                            <a href="/tat-ca-phim" class="btn btn-danger mt-3 px-4 fw-bold rounded-pill">ĐẶT VÉ NGAY</a>
+                        </div>
+                        <% } else { %>
+                            <div class="row g-4">
+                                <% lichSu.forEach(hd=> {
+                                    // Tương thích ngược: MongoDB vs SQL
+                                    const idHoaDon = hd._id || hd.MA_HOA_DON;
+                                    const trangThai = hd.trangThaiThanhToan || hd.TRANG_THAI_THANH_TOAN || 'Chờ xử lý';
+                                    const ngayDat = hd.ngayDatVe || hd.NGAY_DAT_VE;
+                                    const gioDat = hd.gioDatVe || hd.GIO_DAT_VE || (ngayDat ? new
+                                    Date(ngayDat).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'}) :
+                                    '--:--');
+                                    const maVNPay = hd.maGiaoDichVNPay || hd.MA_GIAO_DICH_VNPAY || 'N/A';
+                                    const tongTien = hd.tongTienThanhToan || hd.TONG_TIEN_THANH_TOAN || 0;
+                                    const badgeClass = (trangThai === 'Đã thanh toán') ? 'bg-success' : (trangThai ===
+                                    'Đã hủy' ? 'bg-danger' : 'bg-primary');
+                                    %>
+                                    <div class="col-12">
+                                        <div class="invoice-card d-flex flex-column flex-md-row">
+                                            <div class="invoice-icon-box p-3">
+                                                <i class="bi bi-receipt-cutoff"></i>
+                                                <span class="small text-secondary mt-2">E-Receipt</span>
+                                            </div>
+
+                                            <div class="p-4 flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h4 class="fw-bold text-white mb-0">
+                                                        Mã Hóa Đơn: <span class="text-danger">#<%=
+                                                                idHoaDon.toString().substring(0, 8).toUpperCase() %>
+                                                        </span>
+                                                    </h4>
+                                                    <span class="badge <%= badgeClass %> px-3 py-2">
+                                                        <%= trangThai %>
+                                                    </span>
+                                                </div>
+
+                                                <p class="text-light-gray small mb-3">
+                                                    Ngày đặt: <span class="text-white">
+                                                        <%= ngayDat ? new Date(ngayDat).toLocaleDateString('vi-VN')
+                                                            : '--/--/----' %>
+                                                    </span>
+                                                    | Giờ: <span class="text-white">
+                                                        <%= gioDat %>
+                                                    </span>
+                                                </p>
+
+                                                <div class="p-3 rounded mb-3"
+                                                    style="background: rgba(255,255,255,0.05);">
+                                                    <div class="small text-light-gray">Mã giao dịch VNPay:</div>
+                                                    <div class="fw-bold text-info">
+                                                        <%= maVNPay %>
+                                                    </div>
+                                                </div>
+
+                                                <button class="btn btn-sm btn-outline-danger rounded-pill px-4"
+                                                    onclick="loadDetail('<%= idHoaDon %>')">
+                                                    <i class="bi bi-eye"></i> Xem chi tiết phim & ghế
+                                                </button>
+                                            </div>
+
+                                            <div
+                                                class="invoice-total-box p-4 d-flex flex-column justify-content-center align-items-center">
+                                                <div class="small text-light-gray mb-1">Tổng tiền</div>
+                                                <h3 class="text-danger fw-bold mb-0">
+                                                    <%= tongTien.toLocaleString('vi-VN') %>đ
+                                                </h3>
+                                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=http://localhost:5000/in-ve/<%= idHoaDon %>"
+                                                    class="bg-white p-1 rounded shadow-sm mt-3" alt="Quét để in vé">
+                                                <div class="small text-secondary mt-1">Quét để in vé</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                            <% } %>
+                                <% } %>
+        </div>
+
+        <div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-dark border-secondary text-white">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning fw-bold">CHI TIẾT GIAO DỊCH #<span id="lbMaHD"></span></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="detailBody">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                async function loadDetail(maHD) {
+                    const modal = new bootstrap.Modal(document.getElementById('modalDetail'));
+                    document.getElementById('lbMaHD').innerText = maHD.substring(0, 8).toUpperCase();
+                    document.getElementById('detailBody').innerHTML = '<div class="text-center py-5"><div class="spinner-border text-danger"></div></div>';
+                    modal.show();
+
+                    try {
+                        const res = await fetch(`/api/hoa-don/chi-tiet/${maHD}`);
+                        const result = await res.json();
+
+                        if (result.success) {
+                            const hd = result.data;
+
+                            // XỬ LÝ DỮ LIỆU: Ưu tiên dữ liệu mảng (MongoDB) -> Fallback dữ liệu gộp (SQL)
+                            const ve = (hd.veXemPhims && hd.veXemPhims.length > 0) ? hd.veXemPhims[0] : {};
+
+                            const tenPhim = ve.tenPhim || hd.TEN_PHIM || 'Thông tin phim';
+                            const phong = ve.tenPhongChieu || hd.TEN_PHONG_CHIEU || 'N/A';
+
+                            let gioChieu = ve.gioBatDau || hd.GIO_CHIEU || '--:--';
+                            let ngayChieu = ve.ngayChieu || hd.NGAY_CHIEU;
+                            if (ngayChieu) ngayChieu = new Date(ngayChieu).toLocaleDateString('vi-VN');
+
+                            // Gộp danh sách ghế
+                            const danhSachGhe = (hd.veXemPhims && hd.veXemPhims.length > 0)
+                                ? hd.veXemPhims.map(v => v.tenGheNgoi).join(', ')
+                                : (hd.DANH_SACH_GHE || 'Chưa chọn ghế');
+
+                            // Gộp danh sách bắp nước
+                            let danhSachSP = hd.DANH_SACH_SP || 'Không mua kèm sản phẩm';
+                            if (hd.chiTietHoaDons && hd.chiTietHoaDons.length > 0) {
+                                danhSachSP = hd.chiTietHoaDons.map(sp => `${sp.tenSanPham} (x${sp.soLuong})`).join('<br>');
+                            }
+
+                            const tongTien = hd.tongTienThanhToan || hd.TONG_TIEN_THANH_TOAN || 0;
+                            const poster = ve.hinhAnhPoster || hd.HINH_ANH_POSTER || 'https://via.placeholder.com/200x300?text=CineHub';
+
+                            document.getElementById('detailBody').innerHTML = `
+                        <div class="row">
+                            <div class="col-md-4 mb-3 text-center">
+                                <img src="${poster}" class="img-fluid rounded border border-secondary shadow w-100" style="max-height:300px; object-fit:cover;">
+                            </div>
+                            <div class="col-md-8">
+                                <h3 class="text-danger fw-bold mb-3">${tenPhim}</h3>
+                                <div class="mb-2"><i class="bi bi-calendar-check text-warning"></i> Suất chiếu: <b>${gioChieu} - ${ngayChieu}</b></div>
+                                <div class="mb-2"><i class="bi bi-door-open text-warning"></i> Phòng: <b>${phong}</b></div>
+                                <div class="mb-3"><i class="bi bi-couch text-warning"></i> Ghế ngồi: <b class="text-danger fs-5">${danhSachGhe}</b></div>
+                                
+                                <div class="p-3 rounded border border-secondary" style="background: rgba(255,255,255,0.03);">
+                                    <h6 class="text-info fw-bold mb-2"><i class="bi bi-cart4"></i> Bắp nước đã chọn:</h6>
+                                    <p class="mb-0 small">${danhSachSP}</p>
+                                </div>
+                                
+                                <div class="mt-4 pt-3 border-top border-secondary d-flex justify-content-between align-items-center">
+                                    <span class="text-secondary">Tổng thanh toán</span>
+                                    <h3 class="text-white fw-bold mb-0">${tongTien.toLocaleString('vi-VN')}đ</h3>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                        } else {
+                            document.getElementById('detailBody').innerHTML = '<p class="text-center text-danger">Không tìm thấy dữ liệu hóa đơn.</p>';
+                        }
+                    } catch (err) {
+                        document.getElementById('detailBody').innerHTML = '<p class="text-center text-danger">Lỗi kết nối máy chủ.</p>';
+                    }
+                }
+            </script>
+</body>
+
+</html>

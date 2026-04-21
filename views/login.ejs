@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title>Đăng Nhập - Duy Movie</title>
+        <style>
+            .login-box {
+                max-width: 400px;
+                margin: 100px auto;
+            }
+        </style>
+</head>
+
+<body class="bg-dark">
+    <%- include('partials/header') %>
+
+        <div class="container">
+            <div class="login-box card bg-secondary text-white p-4 shadow-lg border-0">
+                <h3 class="text-center fw-bold mb-4">ĐĂNG NHẬP</h3>
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label class="form-label">Tài khoản</label>
+                        <input type="text" id="username" class="form-control" placeholder="Tên đăng nhập" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu</label>
+                        <input type="password" id="password" class="form-control" placeholder="******" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">ĐĂNG NHẬP</button>
+                </form>
+                <div class="text-center mt-3 small">
+                    Chưa có tài khoản? <a href="/register" class="text-warning text-decoration-none">Đăng ký ngay</a>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+            <script src="/js/login.js"></script>
+</body>
+
+</html>

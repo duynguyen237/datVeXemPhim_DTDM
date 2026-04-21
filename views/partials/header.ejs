@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top" style="height: 70px;">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-danger d-flex align-items-center gap-2" href="/">
+            <i class="bi bi-wallet-fill"></i> Dunema
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto ms-4 fw-bold gap-3">
+                <li class="nav-item">
+                    <a class="nav-link text-danger fs-6" href="/tat-ca-phim">Phim chiếu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark fs-6" href="/rap-chieu">Hệ thống rạp</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark fs-6" href="/review-phim">Review phim</a>
+                </li>
+                <% if (typeof user !=='undefined' && user && user.vaiTro==='admin' ) { %>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fs-6" href="/admin">
+                            <i class="bi bi-shield-lock"></i> Quản trị
+                        </a>
+                    </li>
+                    <% } %>
+            </ul>
+
+            <div id="user-info" class="d-flex align-items-center gap-3">
+                <% if (typeof user !=='undefined' && user) { %>
+                    <a href="/profile" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold">
+                        <i class="bi bi-person-circle"></i>
+                        <%= user.hoTen %>
+                    </a>
+                    <a href="/lich-su" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold">
+                        <i class="bi bi-clock-history"></i> Vé của tôi
+                    </a>
+                    <a href="/logout" class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">
+                        <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                    </a>
+                    <% } else { %>
+                        <a href="/login" class="btn btn-outline-danger btn-sm rounded-pill px-4 fw-bold">Đăng Nhập</a>
+                        <a href="/register" class="btn btn-danger btn-sm rounded-pill px-4 fw-bold">Đăng Ký</a>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+</nav>

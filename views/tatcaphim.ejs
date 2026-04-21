@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title>Tất cả phim chiếu rạp - CinéHub</title>
+        <link rel="stylesheet" href="/css/home.css">
+        <style>
+            .movie-card {
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            }
+
+            .movie-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .movie-overlay {
+                background: rgba(0, 0, 0, 0.4);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .movie-card:hover .movie-overlay {
+                opacity: 1;
+            }
+        </style>
+</head>
+
+<body class="bg-white text-dark">
+    <%- include('partials/header') %>
+
+        <div class="container py-5 mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="title-border fw-bold m-0 fs-3" style="color: var(--momo-pink-dark, #a50064);">Tất cả phim
+                    chiếu rạp
+                </h2>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb m-0 small fw-medium">
+                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang
+                                chủ</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"
+                            style="color: var(--momo-pink, #dc3545);">Tất cả phim</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 mb-5">
+                <% if (movies && movies.length> 0) { %>
+                    <% movies.forEach(movie=> {
+                        // ==========================================
+                        // XỬ LÝ TƯƠNG THÍCH NGƯỢC: MONGODB vs SQL
+                        // ==========================================
+                        const maPhim = movie._id || movie.MA_PHIM;
+                        const tenPhim = movie.tenPhim || movie.TEN_PHIM || 'Đang cập nhật';
+                        const gioiHanTuoi = movie.gioiHanTuoi || movie.GIOI_HAN_TUOI || 'P';
+                        // Ưu tiên Poster (ảnh dọc) thay vì ảnh nền (ảnh ngang) cho Card đứng
+                        const hinhAnh = movie.hinhAnhPoster || movie.HINH_ANH_POSTER || movie.hinhAnhNen ||
+                        movie.HINH_ANH_NEN || '/images/default-poster.jpg';
+                        const tenTheLoai = movie.tenTheLoai || movie.TEN_THE_LOAI || 'Đang cập nhật';
+                        %>
+                        <div class="col">
+                            <div class="movie-card" onclick="window.location.href='/chitietphim?id=<%= maPhim %>'">
+                                <div
+                                    class="movie-poster-wrapper position-relative rounded-3 overflow-hidden shadow-sm border border-light">
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2 z-2 shadow">
+                                        <%= gioiHanTuoi %>+
+                                    </span>
+
+                                    <img src="<%= hinhAnh %>" class="w-100" style="height: 300px; object-fit: cover;"
+                                        alt="<%= tenPhim %>">
+
+                                    <div
+                                        class="movie-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-play-circle text-white shadow-sm"
+                                            style="font-size: 3.5rem;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="movie-info mt-3 text-start">
+                                    <h3 class="fs-6 fw-bold text-dark text-truncate mb-1" title="<%= tenPhim %>">
+                                        <%= tenPhim %>
+                                    </h3>
+                                    <p class="text-secondary small mb-1">
+                                        <%= tenTheLoai %>
+                                    </p>
+                                    <p class="text-warning small mb-0 fw-bold"><i class="bi bi-star-fill"></i> 9.0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="col-12 text-center py-5 w-100">
+                                    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg"
+                                        width="80" class="mb-3 opacity-50" alt="No data">
+                                    <p class="text-muted fs-5">Hiện chưa có bộ phim nào trong hệ thống!</p>
+                                    <a href="/" class="btn btn-outline-danger mt-2 rounded-pill px-4">Về trang chủ</a>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

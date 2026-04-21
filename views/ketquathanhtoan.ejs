@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <link rel="stylesheet" href="/css/ketquathanhtoan.css">
+        <title>Kết Quả Thanh Toán - CinéHub</title>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+        <div class="main-container">
+            <div class="ticket-card animate__animated animate__fadeInUp">
+                <% if (success) { %>
+                    <div class="status-header success">
+                        <i class="bi bi-check-circle-fill status-icon"></i>
+                        <h3 class="fw-bold mb-0">THANH TOÁN THÀNH CÔNG</h3>
+                    </div>
+                    <% } else { %>
+                        <div class="status-header fail">
+                            <i class="bi bi-x-circle-fill status-icon"></i>
+                            <h3 class="fw-bold mb-0">THANH TOÁN THẤT BẠI</h3>
+                        </div>
+                        <% } %>
+
+                            <div class="ticket-body">
+                                <% if (success && typeof data !=='undefined' ) { /* Lấy thông tin từ mảng veXemPhims trả
+                                    về từ MongoDB */ const invoice=Array.isArray(data) ? data[0] : data; const
+                                    veInfo=(invoice.veXemPhims && invoice.veXemPhims.length> 0) ? invoice.veXemPhims[0]
+                                    : {};
+
+                                    const tenPhim = veInfo.tenPhim || 'Vé Xem Phim';
+                                    const gioChieu = veInfo.gioBatDau || '--:--';
+                                    let ngayChieu = veInfo.ngayChieu ? new
+                                    Date(veInfo.ngayChieu).toLocaleDateString('vi-VN') : '--/--/----';
+
+                                    const phongChieu = veInfo.tenPhongChieu || 'Phòng chiếu';
+                                    const rapChieu = veInfo.tenRap || 'CinéHub';
+                                    const tongTien = invoice.tongTienThanhToan || 0;
+
+                                    /* Hiển thị danh sách ghế */
+                                    let dsGhe = invoice.veXemPhims ? invoice.veXemPhims.map(v =>
+                                    v.tenGheNgoi).filter(Boolean).join(', ') : '';
+                                    if (!dsGhe) dsGhe = (invoice.veXemPhims ? invoice.veXemPhims.length : 0) + " ghế";
+                                    %>
+                                    <div class="mb-4 text-center text-sm-start">
+                                        <div class="info-label">
+                                            <%= rapChieu %>
+                                        </div>
+                                        <div class="movie-title text-uppercase text-danger">
+                                            <%= tenPhim %>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="info-label">Ngày chiếu</div>
+                                            <div class="info-value">
+                                                <%= ngayChieu %>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="info-label">Giờ chiếu</div>
+                                            <div class="info-value">
+                                                <%= gioChieu %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-6">
+                                            <div class="info-label">Phòng</div>
+                                            <div class="info-value">
+                                                <%= phongChieu %>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="info-label">Ghế</div>
+                                            <div class="info-value text-danger fw-bold">
+                                                <%= dsGhe %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ticket-divider"></div>
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <div>
+                                            <div class="info-label">Tổng tiền</div>
+                                            <div class="h4 fw-bold text-success mb-0">
+                                                <%= tongTien.toLocaleString('vi-VN') %> đ
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                        <div class="text-center py-4">
+                                            <p class="text-danger">
+                                                <%= typeof message !=='undefined' ? message : 'Giao dịch bị hủy.' %>
+                                            </p>
+                                        </div>
+                                        <% } %>
+                                            <div class="d-grid gap-2 mt-2">
+                                                <a href="/" class="btn btn-danger btn-lg rounded-pill">Về Trang Chủ</a>
+                                                <% if (success) { %><a href="/lich-su"
+                                                        class="btn btn-outline-dark btn-lg rounded-pill">Xem Lịch Sử</a>
+                                                    <% } %>
+                                            </div>
+                            </div>
+            </div>
+        </div>
+        <%- include('partials/footer') %>
+</body>
+
+</html>

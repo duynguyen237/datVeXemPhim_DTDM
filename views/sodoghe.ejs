@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <link rel="stylesheet" href="/css/seat.css">
+        <title>Chọn Ghế - CinéHub</title>
+</head>
+
+<body class="bg-dark text-white">
+    <%- include('partials/header') %>
+
+        <div class="container mt-4 mb-5">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card bg-secondary text-white shadow-lg p-4 bordered-card">
+
+                        <div class="screen mb-5 mx-auto text-center shadow-lg"></div>
+
+                        <div id="seat-map" class="mb-4">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-danger" role="status"></div>
+                                <p class="mt-2 text-muted">Đang tải sơ đồ ghế...</p>
+                            </div>
+                        </div>
+
+                       <div class="d-flex justify-content-center gap-4 flex-wrap mt-4 border-top pt-3">
+    <div class="legend-item d-flex align-items-center">
+        <span class="seat-item available" style="width: 20px; height: 20px; pointer-events: none; margin-right: 8px;"></span> 
+        Ghế thường (Tím)
+    </div>
+    <div class="legend-item d-flex align-items-center">
+        <span class="seat-item vip available" style="width: 20px; height: 20px; pointer-events: none; margin-right: 8px;"></span> 
+        Ghế VIP (Đỏ)
+    </div>
+    <div class="legend-item d-flex align-items-center">
+        <span class="seat-item selected" style="width: 20px; height: 20px; pointer-events: none; margin-right: 8px;"></span> 
+        Đang chọn (Xanh lá)
+    </div>
+    <div class="legend-item d-flex align-items-center">
+        <span class="seat-item occupied" style="width: 20px; height: 20px; pointer-events: none; margin-right: 8px; font-size: 7px;">A1</span> 
+        Đã đặt (Xám)
+    </div>
+</div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-dark border-secondary text-white p-3 sticky-top order-summary-card">
+                        <h4 id="display-movie-name" class="text-danger fw-bold">Tên Phim</h4>
+                        <p id="display-cinema-room" class="text-secondary mb-1">Rạp - Phòng</p>
+                        <p id="display-time" class="small">Giờ chiếu: --:--</p>
+
+                        <hr class="border-secondary">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Ghế chọn:</span>
+                            <b id="selected-seats-text" class="text-warning">Chưa chọn</b>
+                        </div>
+
+                        <div
+                            class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+                            <span class="fs-5">Tổng tiền:</span>
+                            <h3 id="total-price" class="text-danger fw-bold mb-0">0 VNĐ</h3>
+                        </div>
+
+                        <button class="btn btn-danger w-100 mt-4 fw-bold py-3 fs-5 btn-book" onclick="confirmBooking()">
+                            XÁC NHẬN ĐẶT VÉ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/modal_popcorn') %>
+
+            <%- include('partials/footer') %>
+
+                <script src="/js/seat.js"></script>
+</body>
+
+</html>

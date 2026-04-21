@@ -1,0 +1,20 @@
+[
+    {
+        "_id": {
+            "$oid": "66a100000000000000000001"
+        },
+        "tenSanPham": "Khoai tây chiên",
+        "moTaSanPham": "Khoai tây chiên giòn rụm, thơm ngon",
+        "giaSanPham": 55000,
+        "urlImage": "https://jollibee.com.vn/media/catalog/product/cache/11f3e6435b23ab624dc55c2d3fe9479d/p/h/ph_n_n_ph_-_3_4-compressed_1.jpg"
+    },
+    {
+        "_id": {
+            "$oid": "66a100000000000000000002"
+        },
+        "tenSanPham": "Pepsi ",
+        "moTaSanPham": "Nước giải khát có ga mát lạnh",
+        "giaSanPham": 35000,
+        "urlImage": "https://traicayhoabien.com/wp-content/uploads/2025/02/nuoc-ngot-pepsi-lon-nhat-ban-3.jpg"
+    }
+]

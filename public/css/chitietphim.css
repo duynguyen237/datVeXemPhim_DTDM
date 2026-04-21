@@ -1,0 +1,102 @@
+.hero-backdrop {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(220, 53, 69, 0.4)), url('/images/cinema-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 60px 0;
+}
+
+.movie-poster {
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.detail-box {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+/* --- ĐỒNG BỘ GIAO DIỆN ĐẶT VÉ --- */
+#booking-area {
+    background: rgba(20, 20, 20, 0.85);
+    border: 1px solid #444;
+    backdrop-filter: blur(10px);
+}
+
+.custom-select {
+    background-color: #222 !important;
+    color: #ffffff !important;
+    border: 1px solid #555 !important;
+    border-radius: 8px !important;
+    padding: 12px 15px !important;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.custom-select:focus {
+    border-color: #ff4d4d !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 77, 77, 0.25) !important;
+}
+
+/* Định dạng Nút Suất Chiếu */
+.btn-time {
+    background: #2a2a2a !important;
+    border: 1px solid #444 !important;
+    min-width: 140px;
+    padding: 15px !important;
+    border-radius: 12px;
+    transition: 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-time:hover {
+    border-color: #ff4d4d !important;
+    background: #333 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 77, 77, 0.2);
+}
+
+/* Chữ Giờ Chiếu */
+.time-text {
+    color: #ff4d4d !important;
+    /* Đỏ sáng rực rỡ */
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+/* Chữ Phòng Chiếu */
+.room-text {
+    color: #ffffff !important;
+    /* Trắng tinh khiết */
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.date-header {
+    color: #ffc107;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-top: 25px;
+    border-left: 4px solid #ff4d4d;
+    padding-left: 12px;
+    letter-spacing: 1px;
+}
+
+.info-label {
+    color: #aaa;
+    width: 130px;
+    display: inline-block;
+    font-size: 0.9rem;
+}

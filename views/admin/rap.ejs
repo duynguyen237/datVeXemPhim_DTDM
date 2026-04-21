@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('../partials/head') %>
+        <link rel="stylesheet" href="/css/admin_dashboard.css">
+        <title>Quản lý Rạp - Admin</title>
+</head>
+
+<body class="bg-light">
+    <%- include('../partials/admin_sidebar') %>
+
+        <div class="main-content">
+            <div class="top-nav mb-4">
+                <h4 class="fw-bold mb-0">Hệ thống / <small class="text-muted">Quản lý Rạp</small></h4>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 rounded-4 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-building"></i> Danh Sách Rạp Phim</h4>
+                    <button class="btn btn-danger rounded-pill px-4">
+                        <i class="bi bi-plus-lg"></i> Thêm Rạp Mới
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên Rạp</th>
+                                <th>Địa Chỉ</th>
+                                <th>Số Điện Thoại</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (typeof raps !=='undefined' && raps.length> 0) { %>
+                                <% raps.forEach((rap, index)=> {
+                                    // Tương thích MongoDB và SQL
+                                    const tenRap = rap.tenRap || rap.TEN_RAP || 'N/A';
+                                    const diaChi = rap.diaChi || rap.DIA_CHI || 'N/A';
+                                    const sdt = rap.soDienThoai || rap.SO_DIEN_THOAI || 'N/A';
+                                    %>
+                                    <tr>
+                                        <td class="fw-bold text-secondary">
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td class="fw-bold text-dark">
+                                            <%= tenRap %>
+                                        </td>
+                                        <td>
+                                            <%= diaChi %>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">
+                                                <%= sdt %>
+                                            </span></td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-primary" title="Sửa"><i
+                                                    class="bi bi-pencil"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Xóa"><i
+                                                    class="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted py-4">Chưa có dữ liệu rạp
+                                                    chiếu</td>
+                                            </tr>
+                                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

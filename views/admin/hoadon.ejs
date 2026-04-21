@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('../partials/head') %>
+        <link rel="stylesheet" href="/css/admin_dashboard.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+        <title>Quản lý Hóa Đơn - Admin</title>
+</head>
+
+<body class="bg-light">
+    <%- include('../partials/admin_sidebar') %>
+
+        <div class="main-content container py-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0" style="color: #6f42c1;"><i class="bi bi-receipt"></i> Quản Lý Hóa Đơn & Vé</h4>
+                    <button onclick="exportToExcel()" class="btn btn-success shadow-sm me-2">
+                        <i class="bi bi-file-earmark-excel-fill"></i> Xuất Excel
+                    </button>
+                    <a href="/admin" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Về Dashboard</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tableHoaDon" class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã HĐ</th>
+                                    <th>Khách Hàng</th>
+                                    <th>SĐT</th>
+                                    <th>Phim Đặt</th>
+                                    <th>Ngày Đặt</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Trạng Thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% hoaDons.forEach(hd=> { %>
+                                    <tr>
+                                        <td><span class="text-muted">#<%= hd._id.toString().substring(0,
+                                                    8).toUpperCase() %></span></td>
+                                        <td class="fw-bold">
+                                            <%= hd.hoTenNguoiDung || (hd.nguoiDung ? hd.nguoiDung.hoTen
+                                                : 'Khách vãng lai' ) %>
+                                        </td>
+                                        <td>
+                                            <%= hd.nguoiDung ? hd.nguoiDung.soDienThoai : '' %>
+                                        </td>
+                                        <td>
+                                            <span class="text-primary fw-medium">
+                                                <%= hd.suatChieu ? hd.suatChieu.tenPhim : (hd.veXemPhims &&
+                                                    hd.veXemPhims.length> 0 ? hd.veXemPhims[0].tenPhim : 'N/A') %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% let date=new Date(hd.ngayDatVe); let
+                                                dateStr=date.toLocaleDateString('vi-VN') + ' ' +
+                                                date.toLocaleTimeString('vi-VN', {hour: '2-digit' , minute:'2-digit'});
+                                                %>
+                                                <%= dateStr %>
+                                        </td>
+                                        <td class="fw-bold text-danger">
+                                            <%= hd.tongTienThanhToan.toLocaleString('vi-VN') %> đ
+                                        </td>
+                                        <td>
+                                            <% if(hd.trangThaiThanhToan==='Đã thanh toán' ) { %>
+                                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Đã
+                                                    thanh toán</span>
+                                                <% } else if(hd.trangThaiThanhToan==='Đã hủy' ) { %>
+                                                    <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Đã
+                                                        hủy</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-warning text-dark"><i
+                                                                class="bi bi-clock"></i>
+                                                            <%= hd.trangThaiThanhToan %>
+                                                        </span>
+                                                        <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+        <script>
+            async function exportToExcel() {
+                // 1. Lấy bảng dữ liệu bằng ID
+                let table = document.getElementById("tableHoaDon");
+                let wb = XLSX.utils.table_to_book(table, { sheet: "DanhSachHoaDon" });
+
+                // 2. Kiểm tra xem trình duyệt có hỗ trợ tính năng "Hỏi chỗ lưu" không
+                if (window.showSaveFilePicker) {
+                    try {
+                        // Tạo file Excel dưới dạng dữ liệu thô (Blob)
+                        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                        const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+                        // Mở cửa sổ "Save As" cho người dùng chọn chỗ lưu
+                        const fileHandle = await window.showSaveFilePicker({
+                            suggestedName: 'HoaDon_DuyMovie.xlsx', // Tên mặc định
+                            types: [{
+                                description: 'Excel Workbook',
+                                accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] },
+                            }],
+                        });
+
+                        // Ghi dữ liệu vào file người dùng vừa tạo
+                        const writable = await fileHandle.createWritable();
+                        await writable.write(blob);
+                        await writable.close();
+
+                        // Báo thành công (nếu Duy có dùng SweetAlert2 thì hiện lên cho đẹp)
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire('Thành công!', 'Đã xuất và lưu file Excel.', 'success');
+                        } else {
+                            alert('Lưu file Excel thành công!');
+                        }
+
+                    } catch (error) {
+                        // Bỏ qua lỗi nếu người dùng bấm nút "Cancel" trong cửa sổ Save As
+                        if (error.name !== 'AbortError') {
+                            console.error("Lỗi khi lưu file:", error);
+                            alert("Có lỗi xảy ra khi lưu file.");
+                        }
+                    }
+                } else {
+                    // 3. Phương án dự phòng (Fallback)
+                    // Dành cho các trình duyệt cũ hoặc Firefox/Safari không hỗ trợ hỏi chỗ lưu
+                    XLSX.writeFile(wb, "HoaDon_DuyMovie.xlsx");
+                }
+            }
+        </script>
+</body>
+
+</html>

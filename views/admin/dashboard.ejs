@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('../partials/head') %>
+        <link rel="stylesheet" href="/css/admin_dashboard.css">
+        <title>Bảng Điều Khiển - Admin Duy Movie</title>
+</head>
+
+<body>
+    <%- include('../partials/admin_sidebar') %>
+
+        <div class="main-content">
+            <div class="top-nav">
+                <h4 class="fw-bold mb-0">Chào ngày mới, <span id="admin-name" class="text-danger">Admin</span>!</h4>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-danger me-3">Administrator</span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=dc3545&color=fff" class="rounded-circle"
+                        width="40">
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm p-5 text-center rounded-4 mt-5">
+                <h2 class="fw-bold text-danger">Chào mừng bạn đến với Hệ thống Quản trị</h2>
+                <p class="text-muted fs-5">Vui lòng chọn các danh mục ở menu bên trái để bắt đầu quản lý.</p>
+                <div class="mt-4">
+                    <img src="/images/admin-welcome.svg" alt="Welcome" style="max-width: 300px; opacity: 0.8;">
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+/* Thêm biến màu MoMo lên đầu file app.css */
+:root {
+    --momo-pink: #d82f8b;
+    --momo-pink-dark: #a50064;
+    --momo-bg-light: #fdf2f8;
+    /* Nền banner */
+    --momo-bg-dark: #171717;
+}
+
+/* 1. Sửa lại tông màu nền của cả trang thành Sáng */
+body {
+    background-color: #ffffff;
+    color: #333333;
+    font-family: 'Roboto', 'Segoe UI', Tahoma, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 2. Ghi đè màu Danger của Bootstrap thành màu Hồng MoMo */
+.text-danger {
+    color: var(--momo-pink) !important;
+}
+
+.bg-danger {
+    background-color: var(--momo-pink) !important;
+}
+
+.btn-danger {
+    background-color: var(--momo-pink) !important;
+    border-color: var(--momo-pink) !important;
+    color: white !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--momo-pink-dark) !important;
+    border-color: var(--momo-pink-dark) !important;
+}
+
+.btn-outline-danger {
+    color: var(--momo-pink) !important;
+    border-color: var(--momo-pink) !important;
+}
+
+.btn-outline-danger:hover,
+.btn-check:checked+.btn-outline-danger {
+    background-color: var(--momo-pink) !important;
+    color: white !important;
+}
+
+/* 3. Sửa lại thẻ Phim (Bỏ nền đen, viền) */
+.movie-card {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 12px;
+}
+
+.movie-card img {
+    border-radius: 12px;
+    height: 320px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.movie-info {
+    padding: 15px 0 !important;
+    /* Bỏ padding 2 bên để chữ can mép ảnh */
+    text-align: left !important;
+    /* Căn trái giống MoMo */
+    color: #333;
+}
+
+.movie-info h3 {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.movie-info p.text-secondary {
+    font-size: 14px;
+    color: #6b7280 !important;
+}
+
+.text-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    /* Giúp chữ không bị cắt đuôi */
+}

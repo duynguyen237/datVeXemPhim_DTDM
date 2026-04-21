@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title>Hệ Thống Rạp - Dunema</title>
+</head>
+
+<body class="bg-light text-dark">
+    <%- include('partials/header') %>
+
+        <div class="container py-5 mb-5">
+            <div class="text-center mb-5">
+                <h1 class="fw-bold" style="color: #a50064;">Hệ Thống Rạp Dunema</h1>
+                <p class="text-muted">Trải nghiệm điện ảnh đỉnh cao tại các cụm rạp hiện đại nhất</p>
+            </div>
+
+            <div class="row g-4">
+                <% if (typeof raps !=='undefined' && raps.length> 0) { %>
+                    <% raps.forEach(rap=> {
+                        // ==========================================
+                        // XỬ LÝ TƯƠNG THÍCH NGƯỢC: MONGODB vs SQL
+                        // ==========================================
+                        const tenRap = rap.tenRap || rap.TEN_RAP || 'Đang cập nhật tên rạp';
+                        const diaChi = rap.diaChi || rap.DIA_CHI || 'Đang cập nhật địa chỉ';
+                        const sdt = rap.soDienThoai || rap.SO_DIEN_THOAI || 'Đang cập nhật SĐT';
+                        %>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                                <img src="https://homepage.momocdn.net/cinema/momo-cinema-8-1621240173.png"
+                                    class="bg-dark p-4" style="height: 150px; object-fit: contain;" alt="<%= tenRap %>">
+
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-2">
+                                        <%= tenRap %>
+                                    </h5>
+                                    <p class="text-muted small mb-2">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                        <%= diaChi %>
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-telephone-fill text-success me-1"></i>
+                                        <%= sdt %>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-white border-0 p-3 text-center">
+                                    <a href="/tat-ca-phim"
+                                        class="btn btn-outline-danger rounded-pill px-4 w-100 fw-bold">Xem Lịch
+                                        Chiếu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } else { %>
+                                <div class="col-12 text-center py-5">
+                                    <i class="bi bi-building-exclamation text-muted" style="font-size: 3rem;"></i>
+                                    <p class="text-muted fs-5 mt-3">Đang cập nhật hệ thống rạp...</p>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

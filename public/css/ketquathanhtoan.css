@@ -1,0 +1,129 @@
+:root {
+    --primary-color: #ff3333;
+    /* Đỏ rạp phim */
+    --success-color: #28a745;
+    --bg-light: #f4f7f6;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: #333;
+}
+
+.main-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Hiệu ứng Ticket */
+.ticket-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+}
+
+.status-header {
+    padding: 40px 20px;
+    text-align: center;
+    color: white;
+}
+
+.status-header.success {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+}
+
+.status-header.fail {
+    background: linear-gradient(135deg, #dc3545, #a71d2a);
+}
+
+.status-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.ticket-body {
+    padding: 30px;
+    position: relative;
+}
+
+/* Đường răng cưa vé */
+.ticket-divider {
+    position: relative;
+    height: 2px;
+    border-top: 2px dashed #e0e0e0;
+    margin: 20px 0;
+}
+
+.ticket-divider::before,
+.ticket-divider::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: var(--bg-light);
+    border-radius: 50%;
+}
+
+.ticket-divider::before {
+    left: -40px;
+}
+
+.ticket-divider::after {
+    right: -40px;
+}
+
+.info-label {
+    color: #888;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.info-value {
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin-bottom: 15px;
+}
+
+.movie-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    line-height: 1.2;
+}
+
+.btn-home {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-home:hover {
+    background-color: #000;
+    color: white;
+}
+
+.btn-history {
+    border: 2px solid #333;
+    color: #333;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-history:hover {
+    background-color: #333;
+    color: white;
+}

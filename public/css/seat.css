@@ -1,0 +1,101 @@
+/* --- Root Colors & Reset --- */
+:root {
+    --bg-dark: #000000;          /* Nền đen tuyền */
+    --color-normal: #6f42c1;     /* Tím cho ghế thường */
+    --color-vip: #dc3545;        /* Đỏ cho ghế VIP */
+    --color-selected: #28a745;   /* Xanh lá cho ghế đang chọn */
+    --color-occupied: #444444;   /* Xám cho ghế đã đặt */
+    --color-hover: #2ec785;      /* Vàng khi hover */
+}
+
+body {
+    background-color: var(--bg-dark) !important;
+}
+
+/* --- Sơ đồ ghế --- */
+#seat-map {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 30px 0;
+    perspective: 500px; /* Tạo chiều sâu */
+}
+
+.seat-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px !important;
+}
+
+/* --- Định dạng chung cho ghế --- */
+.seat-item {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px 6px 2px 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 1. Ghế thường chưa đặt (Màu Tím) */
+.seat-item.available {
+    background-color: var(--color-normal);
+}
+
+/* 2. Ghế VIP chưa đặt (Màu Đỏ) */
+.seat-item.vip.available {
+    background-color: var(--color-vip);
+    border: 1px solid #ff7878;
+}
+
+/* 3. Ghế đang chọn (Màu Xanh lá) */
+.seat-item.selected {
+    background-color: var(--color-selected) !important;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--color-selected);
+    z-index: 2;
+}
+
+/* 4. Ghế đã đặt (Màu Xám - Có tên ghế mờ) */
+.seat-item.occupied {
+    background-color: var(--color-occupied) !important;
+    color: #999999 !important; /* Tên ghế hiện màu xám sáng hơn nền một chút */
+    cursor: not-allowed;
+    pointer-events: none; /* Khóa click */
+    opacity: 0.7;
+    border: none;
+}
+
+/* --- Hiệu ứng HOVER (Màu Vàng & Phóng to) --- */
+/* Chỉ áp dụng hover cho ghế chưa đặt (available hoặc vip) */
+.seat-item:not(.occupied):hover {
+    background-color: var(--color-hover) !important;
+    color: #000000 !important; /* Chữ đen trên nền vàng cho rõ */
+    transform: scale(1.25) translateY(-5px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.5);
+    z-index: 10;
+}
+
+/* --- Màn hình --- */
+.screen {
+    width: 80%;
+    height: 5px;
+    background: #fff;
+    margin: 0 auto 50px;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+}
+
+/* --- Sidebar Order Summary --- */
+.order-summary-card {
+    background-color: #111 !important;
+    border: 1px solid #333 !important;
+    border-radius: 15px;
+}

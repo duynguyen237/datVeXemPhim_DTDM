@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title>Review Phim Từ Cộng Đồng - Dunema</title>
+</head>
+
+<body class="bg-light text-dark">
+    <%- include('partials/header') %>
+
+        <div class="container py-5 mb-5">
+            <div class="d-flex justify-content-between align-items-end mb-5 border-bottom pb-3">
+                <div>
+                    <h1 class="fw-bold mb-1" style="color: #a50064;">Góc Review Điện Ảnh</h1>
+                    <p class="text-muted mb-0">Hàng ngàn đánh giá chân thực từ cộng đồng người xem Dunema</p>
+                </div>
+
+                <div id="btn-review-container">
+                    <a href="/login" class="btn btn-outline-danger rounded-pill fw-bold px-4 shadow-sm">
+                        Đăng nhập để viết đánh giá
+                    </a>
+                </div>
+            </div>
+
+            <div class="modal fade" id="reviewModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                        <div class="modal-header bg-light border-0">
+                            <h5 class="modal-title fw-bold" style="color: #a50064;">Viết đánh giá phim</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <form action="/review-phim/submit" method="POST">
+                            <input type="hidden" name="maNguoiDung" id="input-ma-nguoi-dung">
+
+                            <div class="modal-body p-4">
+                                <div id="empty-review-msg" class="text-center py-4" style="display: none;">
+                                    <img src="/images/empty-ticket.svg" style="width: 80px; opacity: 0.5;" class="mb-3"
+                                        onerror="this.style.display='none'">
+                                    <h6 class="fw-bold text-dark">Bạn chưa xem phim nào!</h6>
+                                    <p class="text-muted small mb-0">Tính năng này chỉ dành cho khách hàng đã mua vé
+                                        thành
+                                        công trên hệ thống Dunema.</p>
+                                </div>
+
+                                <div id="form-review-content" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="fw-bold mb-2 small text-secondary">CHỌN PHIM BẠN ĐÃ XEM</label>
+                                        <select name="maPhim" id="select-phim" class="form-select bg-light border-0"
+                                            required>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold mb-2 small text-secondary">CẢM NHẬN CỦA BẠN</label>
+                                        <textarea name="noiDung" class="form-control bg-light border-0" rows="5"
+                                            required
+                                            placeholder="Bộ phim này có kịch bản, diễn viên, kỹ xảo như thế nào?..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer border-0 bg-light">
+                                <button type="button" class="btn btn-secondary rounded-pill px-4"
+                                    data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" id="btn-submit-review"
+                                    class="btn btn-danger rounded-pill px-4 fw-bold" style="display: none;">Đăng
+                                    bài</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <% if (typeof reviews !=='undefined' && reviews.length> 0) { %>
+                    <% reviews.forEach(review=> { %>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card border-0 shadow-sm h-100 rounded-4 p-4 bg-white">
+                                <div class="d-flex align-items-center mb-3 border-bottom pb-3">
+                                    <img src="https://ui-avatars.com/api/?name=<%= review.HO_TEN %>&background=random&color=fff"
+                                        class="rounded-circle me-3 shadow-sm" width="50">
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-capitalize">
+                                            <%= review.HO_TEN %>
+                                        </h6>
+                                        <small class="text-muted d-block text-truncate" style="max-width: 200px;">
+                                            Đã xem: <a href="/chitietphim?id=<%= review.MA_PHIM %>"
+                                                class="fw-bold text-danger text-decoration-none">
+                                                <%= review.TEN_PHIM %>
+                                            </a>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="text-warning mb-3 fs-6">
+                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                        class="bi bi-star-fill"></i>
+                                </div>
+                                <p class="text-secondary mb-0" style="font-style: italic; line-height: 1.6;">"<%=
+                                        review.NOI_DUNG_DANH_GIA %>"</p>
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } else { %>
+                                <div class="col-12 text-center text-muted py-5">
+                                    <i class="bi bi-chat-square-dots fs-1 d-block mb-3"></i>
+                                    <h5>Chưa có bài đánh giá nào.</h5>
+                                    <p>Hãy là người đầu tiên để lại cảm nhận của bạn nhé!</p>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Lấy thông tin user từ localStorage 
+                    // (Đảm bảo key 'user' khớp với lúc bạn đăng nhập thành công)
+                    const userStr = localStorage.getItem('user');
+
+                    if (userStr) {
+                        const user = JSON.parse(userStr);
+
+                        // 1. Đổi nút "Đăng nhập" thành "Viết đánh giá"
+                        document.getElementById('btn-review-container').innerHTML = `
+                    <button class="btn btn-danger rounded-pill fw-bold px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                        <i class="bi bi-pencil-square me-1"></i> Viết đánh giá
+                    </button>
+                `;
+
+                        // 2. Gán mã người dùng vào form ẩn
+                        document.getElementById('input-ma-nguoi-dung').value = user.MA_NGUOI_DUNG;
+
+                        // 3. Gọi API lấy danh sách phim đã xem
+                        // LƯU Ý: Bạn cần đảm bảo đã tạo route GET /api/phim/da-xem/:maND ở Backend nhé!
+                        fetch(`/api/phim/da-xem/${user.MA_NGUOI_DUNG}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success && data.data.length > 0) {
+                                    // Nếu có phim -> Hiện form nhập liệu
+                                    const select = document.getElementById('select-phim');
+                                    select.innerHTML = '<option value="" disabled selected>-- Bấm để chọn phim --</option>';
+
+                                    // Tránh lặp phim nếu khách mua nhiều vé cho cùng 1 phim
+                                    const uniqueMovies = [];
+                                    const map = new Map();
+                                    for (const item of data.data) {
+                                        if (!map.has(item.MA_PHIM)) {
+                                            map.set(item.MA_PHIM, true);
+                                            uniqueMovies.push(item);
+                                        }
+                                    }
+
+                                    uniqueMovies.forEach(p => {
+                                        select.innerHTML += `<option value="${p.MA_PHIM}">${p.TEN_PHIM}</option>`;
+                                    });
+
+                                    document.getElementById('form-review-content').style.display = 'block';
+                                    document.getElementById('btn-submit-review').style.display = 'block';
+                                } else {
+                                    // Nếu không có phim -> Hiện thông báo chưa mua vé
+                                    document.getElementById('empty-review-msg').style.display = 'block';
+                                }
+                            })
+                            .catch(err => console.error("Lỗi lấy danh sách phim:", err));
+                    }
+                });
+            </script>
+</body>
+
+</html>

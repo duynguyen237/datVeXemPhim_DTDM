@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('../partials/head') %>
+        <link rel="stylesheet" href="/css/admin_dashboard.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+        <title>Quản lý Phim - Admin</title>
+        <style>
+            .img-preview {
+                width: 50px;
+                height: 75px;
+                object-fit: cover;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+
+            .movie-hidden {
+                opacity: 0.5;
+                filter: grayscale(100%);
+            }
+        </style>
+</head>
+
+<body class="bg-light">
+    <%- include('../partials/admin_sidebar') %>
+        <div class="main-content">
+            <div class="top-nav mb-4">
+                <h4 class="fw-bold mb-0">Hệ thống / <small class="text-muted">Quản lý Phim</small></h4>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 rounded-4 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-film"></i> Danh Sách Phim</h4>
+                    <button class="btn btn-danger rounded-pill px-4 shadow-sm" data-bs-toggle="modal"
+                        data-bs-target="#modalAddPhim">
+                        <i class="bi bi-plus-lg me-1"></i> Thêm Phim Mới
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="tablePhim" class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>STT</th>
+                                <th class="text-center">Poster</th>
+                                <th>Tên Phim</th>
+                                <th>Thể Loại</th>
+                                <th class="text-center">Trạng Thái</th>
+                                <th class="text-center">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (typeof phims !=='undefined' && phims.length> 0) { %>
+                                <% phims.forEach((p, index)=> {
+                                    const maPhim = p._id || p.MA_PHIM;
+                                    const tenPhim = p.tenPhim || p.TEN_PHIM || 'Chưa có tên';
+                                    const poster = p.hinhAnhPoster || p.HINH_ANH_POSTER || p.hinhAnhNen ||
+                                    '/images/default-poster.jpg';
+                                    const theLoai = p.tenTheLoai || p.TEN_THE_LOAI || 'N/A';
+
+                                    // Kiểm tra biến trạng thái ẩn (daAn)
+                                    const isHidden = p.daAn === true;
+                                    %>
+                                    <tr class="<%= isHidden ? 'movie-hidden' : '' %>">
+                                        <td class="fw-bold text-secondary">
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td class="text-center">
+                                            <img src="<%= poster %>" class="img-preview" alt="Poster">
+                                        </td>
+                                        <td class="fw-bold text-dark">
+                                            <%= tenPhim %>
+                                        </td>
+                                        <td><span class="badge bg-secondary">
+                                                <%= theLoai %>
+                                            </span></td>
+                                        <td class="text-center">
+                                            <% if (isHidden) { %>
+                                                <span class="badge bg-danger">Đã Ẩn</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-success">Đang Chiếu</span>
+                                                    <% } %>
+                                        </td>
+                                        <td class="text-center">
+                                            <button
+                                                class="btn btn-sm <%= isHidden ? 'btn-outline-success' : 'btn-outline-warning' %>"
+                                                onclick="toggleHidePhim('<%= maPhim %>', <%= isHidden %>)">
+                                                <i class="bi <%= isHidden ? 'bi-eye' : 'bi-eye-slash' %>"></i>
+                                                <%= isHidden ? 'Hiện' : 'Ẩn' %>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/modal_add_phim') %>
+
+            <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+            <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+            <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    $('#tablePhim').DataTable({ "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/vi.json" } });
+                });
+
+                // HÀM ẨN/HIỆN PHIM MỚI
+                async function toggleHidePhim(id, currentHiddenStatus) {
+                    const actionName = currentHiddenStatus ? "Hiển thị lại" : "Ẩn";
+                    const result = await Swal.fire({
+                        title: `Bạn muốn ${actionName} phim này?`,
+                        text: currentHiddenStatus ? "Phim sẽ xuất hiện trở lại trên trang chủ." : "Phim sẽ không hiển thị với khách hàng nữa, nhưng dữ liệu vẫn được giữ lại.",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: currentHiddenStatus ? '#28a745' : '#ffc107',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: `Đồng ý ${actionName}`,
+                        cancelButtonText: 'Hủy bỏ'
+                    });
+
+                    if (result.isConfirmed) {
+                        try {
+                            // Gọi API Toggle Trạng thái
+                            const response = await fetch(`/admin/phim/toggle-hide/${id}`, { method: 'POST' });
+                            const data = await response.json();
+
+                            if (data.success) {
+                                Swal.fire('Thành công!', data.message, 'success').then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Lỗi!', data.message, 'error');
+                            }
+                        } catch (error) {
+                            Swal.fire('Lỗi!', 'Mất kết nối đến máy chủ.', 'error');
+                        }
+                    }
+                }
+            </script>
+</body>
+
+</html>

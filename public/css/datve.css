@@ -1,0 +1,32 @@
+.booking-hero {
+    background: linear-gradient(135deg, #1a1a1a, #2d1b69);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, .25);
+}
+
+/* Hiệu ứng cho nút Giờ Chiếu */
+.showtime-btn {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-width: 2px;
+    background-color: #2c2c2c;
+    color: #dc3545;
+}
+
+.showtime-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    background-color: #3d3d3d;
+}
+
+/* Hiệu ứng rực rỡ khi nút ĐÃ ĐƯỢC CHỌN */
+.showtime-btn.selected {
+    background-color: #dc3545 !important;
+    color: white !important;
+    transform: scale(1.08);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.7);
+    border-color: #dc3545;
+}

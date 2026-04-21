@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title>Đặt Vé - Duy Movie</title>
+        <link rel="stylesheet" href="/css/datve.css">
+</head>
+
+<body class="bg-dark text-white">
+    <%- include('partials/header') %>
+
+        <div class="booking-hero py-5 mb-5">
+            <div class="container">
+                <h1 class="display-4 fw-bold text-center text-white mb-4">
+                    <i class="bi bi-ticket-detailed text-danger"></i> ĐẶT VÉ XEM PHIM
+                </h1>
+                <p class="lead text-center text-white-50 mb-5">
+                    Chọn phim, rạp, giờ chiếu - Đặt vé dễ dàng chỉ trong 3 bước!
+                </p>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card bg-secondary text-white border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <form id="booking-form">
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-white fs-5">🎥 BƯỚC 1: Chọn phim</label>
+                                        <select id="movie-select" class="form-select form-select-lg" required>
+                                            <option value="">-- Chọn phim --</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-white">📅 Ngày chiếu</label>
+                                        <select id="date-select" class="form-select">
+                                            <option value="">-- Chọn ngày --</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-white">🏛️ Rạp</label>
+                                        <select id="cinema-select" class="form-select">
+                                            <option value="">-- Chọn rạp --</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-white fs-5">⏰ BƯỚC 2: Chọn giờ
+                                            chiếu</label>
+                                        <div id="showtime-list" class="row g-3 mt-2">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 text-center">
+                                        <button type="submit" class="btn btn-danger btn-lg px-5 py-3 fw-bold shadow-lg"
+                                            id="next-step-btn" disabled>
+                                            <i class="bi bi-arrow-right-circle me-2"></i>TIẾP TỤC CHỌN GHẾ
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+            <script src="/js/datve.js"></script>
+</body>
+
+</html>

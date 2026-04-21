@@ -1,0 +1,50 @@
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-warning fw-bold">CHỌN THÊM BẮP NƯỚC</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="product-list" class="row g-3">
+                    <div class="py-5 opacity-50 text-center">Đang tải danh sách quà tặng...</div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary justify-content-between">
+                <div>
+                    <span class="text-secondary small">Tổng thanh toán:</span>
+                    <h4 id="total-final" class="text-danger fw-bold mb-0">0 VNĐ</h4>
+                </div>
+                <button type="button" class="btn btn-danger px-4 fw-bold" onclick="goToPayment()">
+                    XÁC NHẬN & THANH TOÁN
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Đoạn script bổ sung để Duy tham khảo cách render
+    async function loadProducts() {
+        try {
+            const res = await fetch('/api/san-pham');
+            const result = await res.json();
+            if (result.success) {
+                const html = result.data.map(sp => `
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center p-2 border border-secondary rounded">
+                        <img src="${sp.urlImage}" width="60" class="rounded me-3">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 small">${sp.tenSanPham}</h6>
+                            <span class="text-warning small">${sp.giaSanPham.toLocaleString()} đ</span>
+                        </div>
+                        <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary w-25" 
+                               value="0" min="0" onchange="updateTotal()">
+                    </div>
+                </div>
+            `).join('');
+                document.getElementById('product-list').innerHTML = html;
+            }
+        } catch (e) { console.error("Lỗi load bắp nước"); }
+    }
+</script>

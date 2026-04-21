@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('../partials/head') %>
+        <link rel="stylesheet" href="/css/admin_dashboard.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+        <title>Quản lý Suất Chiếu - Admin</title>
+</head>
+
+<body class="bg-light">
+    <%- include('../partials/admin_sidebar') %>
+
+        <div class="main-content">
+            <div class="top-nav mb-4">
+                <h4 class="fw-bold mb-0">Hệ thống / <small class="text-muted">Suất Chiếu</small></h4>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 rounded-4 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-calendar-event"></i> Lịch Chiếu Phim</h4>
+
+                    <button class="btn btn-danger rounded-pill px-4 shadow-sm" data-bs-toggle="modal"
+                        data-bs-target="#modalAddSuatChieu">
+                        <i class="bi bi-plus-lg me-1"></i> Tạo Suất Chiếu Mới
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="tableSuatChieu" class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Phim</th>
+                                <th>Rạp</th>
+                                <th>Phòng</th>
+                                <th class="text-center">Ngày Chiếu</th>
+                                <th class="text-center">Giờ</th>
+                                <th class="text-end">Giá Cơ Bản</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (typeof suatChieus !=='undefined' && suatChieus.length> 0) { %>
+                                <% suatChieus.forEach(sc=> {
+                                    const id = sc._id || sc.MA_SUAT_CHIEU;
+                                    const tenPhim = sc.tenPhim || sc.TEN_PHIM || 'N/A';
+                                    const tenRap = sc.tenRap || sc.TEN_RAP || 'N/A';
+                                    const tenPhong = sc.tenPhongChieu || sc.TEN_PHONG_CHIEU || 'N/A';
+                                    const ngay = sc.ngayChieu ? new Date(sc.ngayChieu).toLocaleDateString('vi-VN') :
+                                    'N/A';
+                                    const gio = sc.gioBatDau || sc.GIO_BAT_DAU || '--:--';
+                                    const gia = sc.giaVeCoban || sc.GIA_VE_CO_BAN || 0;
+                                    %>
+                                    <tr>
+                                        <td class="fw-bold text-dark">
+                                            <%= tenPhim %>
+                                        </td>
+                                        <td><span class="badge bg-secondary">
+                                                <%= tenRap %>
+                                            </span></td>
+                                        <td class="fw-bold text-primary">
+                                            <%= tenPhong %>
+                                        </td>
+                                        <td class="text-center">
+                                            <%= ngay %>
+                                        </td>
+                                        <td class="text-center fw-bold text-danger">
+                                            <%= gio %>
+                                        </td>
+                                        <td class="text-end">
+                                            <%= gia.toLocaleString('vi-VN') %> đ
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteSuatChieu('<%= id %>')">
+                                                <i class="bi bi-trash"></i> Xóa
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalAddSuatChieu" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-calendar-plus me-2"></i>Tạo Suất Chiếu Mới</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="/admin/suatchieu/them" method="POST">
+                        <div class="modal-body p-4">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="fw-bold mb-1">1. Chọn Phim <span class="text-danger">*</span></label>
+                                    <select name="maPhim" class="form-select" required>
+                                        <option value="">-- Chọn Phim --</option>
+                                        <% if (typeof phims !=='undefined' ) { %>
+                                            <% phims.forEach(phim=> { %>
+                                                <% if(!phim.daAn) { %>
+                                                    <option value="<%= phim._id %>">
+                                                        <%= phim.tenPhim %>
+                                                    </option>
+                                                    <% } %>
+                                                        <% }) %>
+                                                            <% } %>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="fw-bold mb-1">2. Chọn Rạp <span class="text-danger">*</span></label>
+                                    <select name="maRap" id="selectRapSuatChieu" class="form-select" required>
+                                        <option value="">-- Chọn Rạp --</option>
+                                        <% if (typeof raps !=='undefined' ) { %>
+                                            <% raps.forEach(rap=> { %>
+                                                <option value="<%= rap._id %>">
+                                                    <%= rap.tenRap %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="fw-bold mb-1">3. Chọn Phòng Chiếu <span
+                                            class="text-danger">*</span></label>
+                                    <select name="maPhong" id="selectPhongSuatChieu" class="form-select" required
+                                        disabled>
+                                        <option value="">-- Vui lòng chọn rạp trước --</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="fw-bold mb-1">4. Ngày Chiếu <span class="text-danger">*</span></label>
+                                    <input type="date" name="ngayChieu" class="form-control" required>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="fw-bold mb-1">5. Giờ Bắt Đầu <span
+                                            class="text-danger">*</span></label>
+                                    <input type="time" name="gioBatDau" class="form-control" required>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="fw-bold mb-1">6. Giá Vé Cơ Bản (VNĐ) <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" name="giaVe" class="form-control" value="75000" min="0"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger fw-bold px-4">Tạo Suất Chiếu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            $(document).ready(function () {
+                // Khởi tạo DataTables
+                $('#tableSuatChieu').DataTable({ "language": { "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/vi.json" } });
+
+                // LOGIC: KHI CHỌN RẠP -> TỰ ĐỘNG LOAD DANH SÁCH PHÒNG CHIẾU
+                $('#selectRapSuatChieu').change(async function () {
+                    const maRap = $(this).val();
+                    const selPhong = $('#selectPhongSuatChieu');
+
+                    selPhong.html('<option value="">-- Đang tải dữ liệu... --</option>');
+
+                    if (!maRap) {
+                        selPhong.html('<option value="">-- Vui lòng chọn rạp trước --</option>');
+                        selPhong.prop('disabled', true);
+                        return;
+                    }
+
+                    try {
+                        // Tận dụng lại API lấy phòng chiếu đã làm ở bài trước
+                        const res = await fetch(`/admin/rap/${maRap}/phong`);
+                        const result = await res.json();
+
+                        selPhong.html('<option value="">-- Chọn Phòng Chiếu --</option>');
+                        if (result.success && result.data.length > 0) {
+                            selPhong.prop('disabled', false);
+                            result.data.forEach(phong => {
+                                const idPhong = phong._id;
+                                const tenPhong = phong.tenPhongChieu;
+                                selPhong.append(`<option value="${idPhong}">${tenPhong}</option>`);
+                            });
+                        } else {
+                            selPhong.html('<option value="">Rạp này chưa có phòng chiếu</option>');
+                            selPhong.prop('disabled', true);
+                        }
+                    } catch (err) {
+                        console.error("Lỗi lấy danh sách phòng:", err);
+                        selPhong.html('<option value="">Lỗi kết nối máy chủ</option>');
+                    }
+                });
+            });
+
+            // Hàm xóa suất chiếu dùng SweetAlert2
+            async function deleteSuatChieu(id) {
+                const result = await Swal.fire({
+                    title: 'Xóa suất chiếu này?',
+                    text: "Hành động này không thể hoàn tác!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Đồng ý xóa'
+                });
+
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/suatchieu/xoa/${id}`, { method: 'DELETE' });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            Swal.fire('Đã xóa!', data.message, 'success').then(() => window.location.reload());
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    } catch (error) {
+                        Swal.fire('Lỗi!', 'Không thể kết nối đến server.', 'error');
+                    }
+                }
+            }
+        </script>
+</body>
+
+</html>

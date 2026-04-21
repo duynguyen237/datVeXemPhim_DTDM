@@ -1,0 +1,83 @@
+.invoice-card {
+    background: #222222;
+    border: 1px solid #444;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.invoice-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    border-color: #e50914;
+}
+
+.invoice-icon-box {
+    background: #1a1a1a;
+    min-width: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px dashed #555;
+}
+
+.invoice-icon-box i {
+    font-size: 2.5rem;
+    color: #e50914;
+}
+
+.text-light-gray {
+    color: #ced4da !important;
+}
+
+.invoice-total-box {
+    background: #1a1a1a;
+    min-width: 200px;
+    border-left: 2px dashed #555;
+    position: relative;
+}
+
+/* Tạo lỗ khuyết đặc trưng của vé/hóa đơn */
+.invoice-total-box::before,
+.invoice-total-box::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #212529;
+    /* Khớp với màu nền của body (bg-dark) */
+    border-radius: 50%;
+    left: -11px;
+}
+
+.invoice-total-box::before {
+    top: -10px;
+}
+
+.invoice-total-box::after {
+    bottom: -10px;
+}
+
+.modal-content {
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(229, 9, 20, 0.2);
+}
+
+@media (max-width: 768px) {
+    .invoice-icon-box {
+        min-height: 100px;
+        border-right: none;
+        border-bottom: 1px dashed #555;
+    }
+
+    .invoice-total-box {
+        border-left: none;
+        border-top: 2px dashed #555;
+    }
+
+    .invoice-total-box::before,
+    .invoice-total-box::after {
+        display: none;
+    }
+}

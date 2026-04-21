@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title>Thanh Toán - CinéHub</title>
+        <link rel="stylesheet" href="/css/thanhtoan.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-dark text-white">
+    <%- include('partials/header') %>
+
+        <div class="container mt-5 pb-5">
+            <h2 class="text-danger fw-bold mb-4 text-center">CHI TIẾT THANH TOÁN</h2>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-5">
+                    <div class="checkout-box shadow-lg">
+                        <h5 class="text-warning mb-4 fw-bold"><i class="fas fa-user-circle me-2"></i>Thông tin liên hệ
+                        </h5>
+
+                        <div class="mb-3">
+                            <label class="small text-secondary mb-1">Họ và tên *</label>
+                            <input type="text" id="cus_name" class="form-control" placeholder="Đang tải dữ liệu...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small text-secondary mb-1">Số điện thoại *</label>
+                            <input type="text" id="cus_phone" class="form-control" placeholder="Đang tải dữ liệu...">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="small text-secondary mb-1">Email liên hệ</label>
+                            <input type="email" id="cus_email" class="form-control" placeholder="Đang tải dữ liệu...">
+                        </div>
+
+                        <div class="alert alert-dark border-secondary small text-muted mb-0">
+                            <i class="fas fa-info-circle me-1 text-info"></i> Thông tin vé sẽ được gửi trực tiếp vào
+                            Email và lưu trong mục Lịch sử đặt vé của bạn.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="checkout-box shadow-lg">
+                        <h5 class="text-warning mb-4 fw-bold"><i class="fas fa-shopping-cart me-2"></i>Đơn hàng của bạn
+                        </h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-dark align-middle bg-transparent mb-0">
+                                <thead>
+                                    <tr class="border-bottom border-secondary text-secondary">
+                                        <th class="bg-transparent px-0">Sản phẩm / Ghế</th>
+                                        <th class="text-center bg-transparent">SL</th>
+                                        <th class="text-end bg-transparent px-0">Giá tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-body">
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">
+                                            <div class="spinner-border spinner-border-sm text-danger me-2"></div>
+                                            Đang tải chi tiết đơn hàng...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="border-top border-secondary pt-4 mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 fw-bold text-white">TỔNG CỘNG</h4>
+                                <h2 class="text-danger fw-bold mb-0" id="final-total">0 VNĐ</h2>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-danger w-100 mt-4 py-3 fw-bold rounded-pill fs-5"
+                            onclick="submitOrder()">
+                            <i class="fas fa-credit-card me-2"></i>XÁC NHẬN & THANH TOÁN
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <img src="https://vnpay.vn/wp-content/uploads/2020/07/Logo-VNPAYQR-update.png" height="30"
+                                alt="VNPay" class="opacity-75">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+            <script src="/js/thanhtoan.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In Vé Xem Phim - K58 - CinéHub</title>
+    <style>
+        /* 1. CẤU HÌNH KHỔ GIẤY IN NHIỆT */
+        @page {
+            size: 58mm auto;
+            margin: 0;
+        }
+
+        /* 2. HIỂN THỊ TRÊN TRÌNH DUYỆT (WEB VIEW) */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .no-print {
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            background: #222;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-print {
+            padding: 10px 25px;
+            background: #e50914;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-print:hover {
+            background: #b20710;
+        }
+
+        /* 3. VÙNG IN (GIẢ LẬP TỜ GIẤY 58MM) */
+        .print-area {
+            width: 58mm;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .ticket {
+            width: 100%;
+            padding: 6mm 2mm;
+            box-sizing: border-box;
+            border-bottom: 1.5pt dashed #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: #fff;
+            page-break-inside: avoid;
+        }
+
+        .ticket:last-child {
+            border-bottom: none;
+        }
+
+        /* 4. NỘI DUNG CHI TIẾT VÉ */
+        .header {
+            width: 90%;
+            border-bottom: 1pt solid #000;
+            margin-bottom: 3mm;
+            padding-bottom: 1mm;
+        }
+
+        .cinema-name {
+            font-size: 16pt;
+            font-weight: bold;
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        .movie-title {
+            font-size: 11pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 4mm 0;
+            line-height: 1.2;
+            width: 100%;
+        }
+
+        .info-row {
+            font-size: 9pt;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 1.5mm;
+            width: 100%;
+        }
+
+        .seat-section {
+            border: 1.5pt solid #000;
+            margin: 4mm 0;
+            width: 85%;
+            padding: 2mm 0;
+        }
+
+        .seat-label {
+            font-size: 8pt;
+            display: block;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .seat-number {
+            font-size: 30pt;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .barcode-area {
+            width: 100%;
+            margin-top: 3mm;
+        }
+
+        .barcode-line {
+            width: 90%;
+            height: 10mm;
+            margin: 0 auto;
+            background: repeating-linear-gradient(90deg, #000, #000 1.5px, #fff 1.5px, #fff 3.5px);
+        }
+
+        .footer {
+            font-size: 8pt;
+            margin-top: 4mm;
+            line-height: 1.3;
+            width: 90%;
+            font-style: italic;
+        }
+
+        /* 5. CẤU HÌNH KHI BẤM LỆNH IN (PRINT MODE) */
+        @media print {
+
+            html,
+            body {
+                background-color: #fff;
+                display: block;
+                min-height: auto;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .print-area {
+                box-shadow: none;
+                margin: 0;
+                width: 58mm;
+            }
+
+            .ticket {
+                border-bottom: 1.5pt dashed #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="no-print">
+        <button class="btn-print" onclick="window.print()">
+            IN TẤT CẢ VÉ (<%= danhSachVe.length %>)
+        </button>
+        <div style="font-size: 11px; margin-top: 8px; color: #bbb;">
+            Thiết lập máy in: <b>Margins: None</b> | <b>Scale: 100%</b>
+        </div>
+    </div>
+
+    <div class="print-area">
+        <% danhSachVe.forEach((ve)=> {
+            // Xử lý tương thích ngược SQL và MongoDB
+            const tenPhim = ve.tenPhim || ve.TEN_PHIM || 'Vé Xem Phim';
+            const ngay = ve.ngayChieu || ve.NGAY_CHIEU;
+            const displayNgay = ngay ? new Date(ngay).toLocaleDateString('vi-VN') : '--/--/----';
+            const gio = ve.gioBatDau || ve.GIO_CHIEU || '--:--';
+            const phong = ve.tenPhongChieu || ve.TEN_PHONG_CHIEU || 'N/A';
+            const ghe = ve.tenGheNgoi || ve.TEN_GHE_NGOI || 'N/A';
+
+            // Các trường này có thể rỗng do cấu trúc nhúng, sẽ được fill bằng JS bên dưới
+            const maHD = ve.maHoaDon || ve.MA_HOA_DON || '';
+            const maVNPay = ve.maGiaoDichVNPay || ve.MA_GIAO_DICH_VNPAY || 'Thanh toán trực tuyến';
+            %>
+            <div class="ticket">
+                <div class="header">
+                    <span class="cinema-name">CINÉHUB</span>
+                    <span class="invoice-id-display"
+                        style="font-size: 8pt; font-weight: bold; display: block; margin-top: 2px;"
+                        data-raw="<%= maHD %>">
+                        Mã HĐ: #<%= maHD.toString().substring(0, 8).toUpperCase() %>
+                    </span>
+                </div>
+
+                <span class="movie-title">
+                    <%= tenPhim %>
+                </span>
+
+                <div class="info-row">
+                    <span>
+                        <%= displayNgay %>
+                    </span>
+                    <span>|</span>
+                    <span>
+                        <%= gio %>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span>Phòng: <b>
+                            <%= phong %>
+                        </b></span>
+                </div>
+
+                <div class="seat-section">
+                    <span class="seat-label">Ghế ngồi</span>
+                    <div class="seat-number">
+                        <%= ghe %>
+                    </div>
+                </div>
+
+                <div class="barcode-area">
+                    <div class="barcode-line"></div>
+                    <span style="font-size: 8pt; font-weight: bold; display: block; margin-top: 3px;">
+                        <%= maVNPay %>
+                    </span>
+                </div>
+
+                <div class="footer">
+                    Vui lòng mang vé này đến quầy soát vé.<br>
+                    <b>Chúc bạn xem phim vui vẻ!</b>
+                </div>
+            </div>
+            <% }) %>
+    </div>
+
+    <script>
+        // Tự động điền Mã HĐ từ URL nếu vé bị thiếu ID do cấu trúc nhúng (Embedded) của MongoDB
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentUrl = window.location.pathname;
+            const maHDFromUrl = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+
+            document.querySelectorAll('.invoice-id-display').forEach(el => {
+                const rawId = el.getAttribute('data-raw');
+                if (!rawId || rawId.trim() === '') {
+                    el.innerText = 'Mã HĐ: #' + maHDFromUrl.substring(0, 8).toUpperCase();
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

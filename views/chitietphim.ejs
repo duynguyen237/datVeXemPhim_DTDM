@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('partials/head') %>
+        <title id="movie-title-tab">Chi Tiết Phim - CinéHub</title>
+        <link rel="stylesheet" href="/css/chitietphim.css">
+        <style>
+            /* CSS chèn trực tiếp để làm đẹp nút chọn rạp */
+            .cinema-btn {
+                transition: all 0.3s ease;
+                border-radius: 50rem;
+                /* Nút bo tròn giống CGV */
+            }
+
+            .cinema-btn.active {
+                background-color: #dc3545 !important;
+                /* Đỏ Bootstrap */
+                color: white !important;
+                box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+                border-color: #dc3545 !important;
+            }
+        </style>
+</head>
+
+<body class="bg-dark text-white">
+    <%- include('partials/header') %>
+
+        <div class="hero-backdrop mb-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+                        <img id="movie-poster" src="" class="movie-poster img-fluid rounded shadow-lg">
+                    </div>
+
+                    <div class="col-md-8">
+                        <h1 id="movie-name" class="display-5 fw-bold mb-2 text-danger text-uppercase"></h1>
+                        <div class="mb-3">
+                            <span id="movie-age-limit" class="badge bg-danger me-2">T13</span>
+                            <span id="movie-duration-badge" class="badge bg-secondary me-2">-- phút</span>
+                            <span id="movie-genre" class="badge bg-warning text-dark"></span>
+                        </div>
+                        <p id="movie-description" class="text-light opacity-75 mb-4"
+                            style="text-align: justify; max-height: 100px; overflow-y: auto;"></p>
+
+                        <div id="booking-area"
+                            class="p-4 rounded-4 shadow-lg bg-dark bg-opacity-50 border border-secondary border-opacity-25">
+                            <h6 class="text-warning fw-bold mb-3 small text-uppercase">
+                                <i class="bi bi-ticket-perforated me-2"></i>Lịch chiếu
+                            </h6>
+
+                            <div class="row g-2 mb-4">
+                                <div class="col-12">
+                                    <div id="cinema-buttons" class="d-flex flex-wrap gap-2"></div>
+                                </div>
+                            </div>
+
+                            <div id="showtime-container" style="display: none;">
+                                <div id="showtime-by-date"></div>
+                            </div>
+
+                            <div id="no-showtime" class="py-4" style="display:none;">
+                                <label class="text-white small mb-2 fw-bold">Chưa có lịch chiếu cho rạp này</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container pb-5">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="detail-box shadow-sm">
+                        <h5 class="text-white mb-4 fw-bold border-bottom pb-2">📋 CHI TIẾT NỘI DUNG</h5>
+                        <div class="mb-2"><span class="info-label text-white-50 w-25 d-inline-block">Đạo diễn:</span>
+                            <span id="director" class="fw-bold text-white"></span>
+                        </div>
+                        <div class="mb-2"><span class="info-label text-white-50 w-25 d-inline-block">Diễn viên:</span>
+                            <span id="actors" class="fw-bold text-white"></span>
+                        </div>
+                        <div class="mb-2"><span class="info-label text-white-50 w-25 d-inline-block">Khởi chiếu:</span>
+                            <span id="release-date" class="fw-bold text-info"></span>
+                        </div>
+                        <div class="mb-2"><span class="info-label text-white-50 w-25 d-inline-block">Thời lượng:</span>
+                            <span id="duration" class="fw-bold text-white"></span>
+                        </div>
+                    </div>
+
+                    <div id="trailer-section" class="detail-box shadow-sm mt-4">
+                        <h5 class="text-danger mb-4 fw-bold"><i class="bi bi-play-btn-fill me-2"></i>TRAILER PHIM</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe id="movie-trailer" class="rounded shadow" src="" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="detail-box text-center shadow-sm">
+                        <h5 class="text-warning mb-3 fw-bold">⭐ ĐÁNH GIÁ</h5>
+                        <div class="display-4 fw-bold text-warning" id="rating-score">8.6</div>
+                        <div class="text-muted small">Dựa trên 18,4k lượt xem</div>
+                        <hr class="border-secondary opacity-25">
+                        <p class="small text-white-50 fst-italic">Chúc bạn có những giây phút thư giãn tuyệt vời!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                let currentMovieId = null;
+                let movieShowtimes = [];
+
+                document.addEventListener('DOMContentLoaded', async () => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    currentMovieId = urlParams.get('id');
+                    if (currentMovieId) loadMovieDetail(currentMovieId);
+                });
+
+                // 1. TẢI THÔNG TIN PHIM
+                async function loadMovieDetail(id) {
+                    try {
+                        const res = await fetch(`/api/phim/detail/${id}`);
+                        const movie = await res.json();
+                        if (!movie) return;
+
+                        const tenPhim = movie.tenPhim || movie.TEN_PHIM;
+                        document.title = tenPhim + " - CinéHub";
+                        document.getElementById('movie-name').textContent = tenPhim;
+                        document.getElementById('movie-poster').src = movie.hinhAnhPoster || movie.HINH_ANH_POSTER || '/images/default-poster.jpg';
+                        document.getElementById('movie-description').textContent = movie.noiDungPhim || movie.NOI_DUNG_PHIM || "Nội dung đang cập nhật...";
+                        document.getElementById('movie-genre').textContent = movie.tenTheLoai || movie.TEN_THE_LOAI || 'Phim';
+
+                        const age = movie.gioiHanTuoi || movie.GIOI_HAN_TUOI || 'P';
+                        document.getElementById('movie-age-limit').textContent = age;
+
+                        const time = movie.thoiLuongPhim || movie.THOI_LUONG_PHIM || 0;
+                        document.getElementById('duration').textContent = time + " phút";
+                        document.getElementById('movie-duration-badge').textContent = time + " phút";
+
+                        const date = movie.ngayKhoiChieu || movie.NGAY_KHOI_CHIEU;
+                        document.getElementById('release-date').textContent = date ? new Date(date).toLocaleDateString('vi-VN') : 'Đang cập nhật';
+
+                        document.getElementById('director').textContent = movie.daoDien || movie.DAO_DIEN || 'Đang cập nhật';
+                        document.getElementById('actors').textContent = movie.dienVien || movie.DIEN_VIEN || 'Đang cập nhật';
+
+                        const trailerUrl = movie.duongDanTrailer || movie.DUONG_DAN_TRAILER;
+                        if (trailerUrl) {
+                            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                            const match = trailerUrl.match(regExp);
+                            if (match) document.getElementById('movie-trailer').src = `https://www.youtube.com/embed/${match[2]}`;
+                        }
+
+                        loadShowtimes(id);
+                    } catch (e) { console.error("Lỗi tải phim:", e); }
+                }
+
+                // 2. TẢI DANH SÁCH SUẤT CHIẾU VÀ TẠO BỘ LỌC RẠP BẰNG NÚT
+                async function loadShowtimes(id) {
+                    try {
+                        const res = await fetch(`/api/suat-chieu/${id}`);
+                        const result = await res.json();
+
+                        if (result.success && result.data.length > 0) {
+                            movieShowtimes = result.data;
+                            const container = document.getElementById('cinema-buttons');
+
+                            // Lọc ra các rạp không trùng lặp
+                            const cinemas = [...new Set(movieShowtimes.map(s => s.tenRap || s.TEN_RAP))].filter(Boolean);
+
+                            // Tạo nút cho từng rạp
+                            cinemas.forEach((c, index) => {
+                                const btn = document.createElement('button');
+                                btn.className = 'btn btn-outline-danger px-4 py-2 fw-bold cinema-btn';
+                                btn.textContent = c;
+
+                                // Sự kiện khi click vào rạp
+                                btn.onclick = function () {
+                                    // Tẩy màu nút cũ
+                                    document.querySelectorAll('.cinema-btn').forEach(b => b.classList.remove('active'));
+                                    // Tô màu nút mới
+                                    this.classList.add('active');
+                                    // Hiện lịch chiếu
+                                    hienThiLichChieu(c);
+                                };
+
+                                container.appendChild(btn);
+
+                                // Mặc định tự động bấm chọn rạp đầu tiên
+                                if (index === 0) btn.click();
+                            });
+                        } else {
+                            document.getElementById('no-showtime').style.display = 'block';
+                        }
+                    } catch (e) { console.error("Lỗi tải suất chiếu:", e); }
+                }
+
+                // 3. HIỂN THỊ GIỜ CHIẾU KHI BẤM CHỌN RẠP
+                function hienThiLichChieu(cinemaName) {
+                    const container = document.getElementById('showtime-container');
+                    const listArea = document.getElementById('showtime-by-date');
+                    const noShowtime = document.getElementById('no-showtime');
+
+                    listArea.innerHTML = '';
+                    noShowtime.style.display = 'none';
+                    container.style.display = 'none';
+
+                    if (!cinemaName) return;
+
+                    const filtered = movieShowtimes.filter(s => (s.tenRap || s.TEN_RAP) === cinemaName);
+
+                    if (filtered.length === 0) {
+                        noShowtime.style.display = 'block';
+                        return;
+                    }
+
+                    container.style.display = 'block';
+
+                    // Nhóm theo ngày chiếu
+                    const groupedByDate = filtered.reduce((groups, sc) => {
+                        let dateStr = sc.NGAY_FORMAT || sc.NGAY_CHIEU_FORMAT;
+                        if (!dateStr && sc.ngayChieu) {
+                            dateStr = new Date(sc.ngayChieu).toLocaleDateString('vi-VN');
+                        }
+                        const date = dateStr || "Hiện tại";
+
+                        if (!groups[date]) groups[date] = [];
+                        groups[date].push(sc);
+                        return groups;
+                    }, {});
+
+                    for (const date in groupedByDate) {
+                        const dateGroup = document.createElement('div');
+                        dateGroup.className = 'mb-4';
+                        dateGroup.innerHTML = `
+                    <div class="date-header mb-3 text-uppercase fw-bold text-warning border-bottom border-warning pb-1" style="width: fit-content;">Ngày ${date}</div>
+                    <div class="d-flex flex-wrap gap-3">
+                        ${groupedByDate[date].map(s => {
+                            const maSC = s._id || s.MA_SUAT_CHIEU;
+                            const displayTime = s.gioBatDau || s.GIO_FORMAT || (s.GIO_BAT_DAU ? s.GIO_BAT_DAU.substring(0, 5) : "--:--");
+                            const tenPhong = s.tenPhongChieu || s.TEN_PHONG_CHIEU;
+
+                            return `
+                                <div class="btn btn-outline-light shadow-sm text-center px-4 py-2" onclick="window.location.href='/sodoghe?maSuatChieu=${maSC}'" style="border-radius: 12px; cursor: pointer;">
+                                    <div class="fw-bold fs-5">${displayTime}</div>
+                                    <div class="small text-muted">${tenPhong}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                        listArea.appendChild(dateGroup);
+                    }
+                }
+            </script>
+</body>
+
+</html>
