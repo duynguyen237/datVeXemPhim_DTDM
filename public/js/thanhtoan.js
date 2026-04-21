@@ -106,37 +106,43 @@ async function submitOrder() {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) return alert("Lỗi: Không tìm thấy thông tin người dùng!");
 
+    // Lấy số tiền thực tế đang hiển thị trên giao diện (đã được format)
+    // Cách an toàn nhất là dùng biến finalTotalAmount đã tính ở loadOrderDetails
+    
     const btn = document.querySelector('button[onclick="submitOrder()"]');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Đang tạo giao dịch...';
 
     try {
         const idNguoiDung = user._id || user.MA_NGUOI_DUNG;
         const hoTenNguoiDung = user.hoTen || user.HO_TEN;
+
+        // Chuẩn bị danh sách sản phẩm để gửi lên (nếu có)
+        const dsSanPham = combosStr ? combosStr.split('|').map(item => {
+            const [id, qty] = item.split(':');
+            return { sanPhamId: id, soLuong: parseInt(qty) };
+        }) : [];
 
         const res = await fetch('/api/ve/dat-ve', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 maNguoiDung: idNguoiDung,
-                hoTenNguoiDung: hoTenNguoiDung, // Bổ sung họ tên để lưu vào Hóa đơn
-                maSuatChieu: maSC, // Gửi nguyên chuỗi ID của MongoDB, không dùng parseInt
-                danhSachMaGhe: ghesStr.split(','), // Gửi mảng chuỗi ID ghế, không map(Number)
-                tongTien: finalTotalAmount
+                hoTenNguoiDung: hoTenNguoiDung,
+                maSuatChieu: maSC,
+                danhSachMaGhe: ghesStr.split(','),
+                dsSanPham: dsSanPham, // PHẢI GỬI THÊM CÁI NÀY
+                tongTien: finalTotalAmount // Giá trị này đã bao gồm cả ghế + bắp nước
             })
         });
 
         const result = await res.json();
-
         if (result.success && result.paymentUrl) {
             window.location.href = result.paymentUrl;
         } else {
             throw new Error(result.message || "Không xác định");
         }
     } catch (error) {
-        console.error("Lỗi submit:", error);
-        alert("Lỗi tạo đơn hàng: " + error.message);
+        alert("Lỗi: " + error.message);
         btn.disabled = false;
-        btn.innerHTML = 'XÁC NHẬN & THANH TOÁN';
     }
 }

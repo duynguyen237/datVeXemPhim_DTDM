@@ -194,16 +194,30 @@ function updateFinalTotal() {
 async function goToPayment() {
     if (selectedSeats.length === 0) return alert("Vui lòng chọn ít nhất 1 ghế!");
 
-    // Chuẩn bị dữ liệu gửi lên Backend
+    // 1. Lấy tổng tiền cuối cùng (đã bao gồm bắp nước) từ giao diện
+    // Hoặc tính toán lại từ biến selectedCombos và selectedSeats
+    const totalFinalText = document.getElementById('total-final').innerText;
+    const totalFinalAmount = parseInt(totalFinalText.replace(/\D/g, ''));
+
+    // 2. Chuyển đổi object selectedCombos thành mảng để gửi lên Backend
+    const dsSanPham = Object.keys(selectedCombos)
+        .filter(id => selectedCombos[id].qty > 0) // Chỉ lấy những cái có số lượng > 0
+        .map(id => ({
+            sanPhamId: id,
+            soLuong: selectedCombos[id].qty
+        }));
+
+    // 3. Chuẩn bị dữ liệu gửi lên Backend
     const bookingData = {
         maSuatChieu: currentMaSuatChieu,
         danhSachMaGhe: selectedSeats.map(s => s._id || s.MA_GHE_NGOI),
-        tongTien: selectedSeats.reduce((sum, s) => sum + basePrice + (parseFloat(s.giaGheNgoi || s.PHU_PHI_GHE) || 0), 0),
-        hoTenNguoiDung: document.getElementById('user-fullname')?.value || '' // Nếu bạn có input tên
+        dsSanPham: dsSanPham, // << THÊM DÒNG NÀY ĐỂ GỬI BẮP NƯỚC
+        tongTien: totalFinalAmount, // << DÙNG TỔNG CUỐI CÙNG
+        hoTenNguoiDung: document.getElementById('user-fullname')?.value || '' 
     };
 
     try {
-        const response = await fetch('/api/ve/dat-ve', { // Đảm bảo route này khớp với veRouter
+        const response = await fetch('/api/ve/dat-ve', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bookingData)
@@ -211,7 +225,6 @@ async function goToPayment() {
 
         const result = await response.json();
         if (result.success && result.paymentUrl) {
-            // Chuyển hướng sang trang thanh toán VNPay
             window.location.href = result.paymentUrl;
         } else {
             alert("Lỗi: " + (result.message || "Không thể khởi tạo thanh toán"));

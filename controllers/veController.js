@@ -35,6 +35,8 @@ class VeController {
                 dsSanPham: []
             });
 
+            console.log(`dsSanPham trước khi tạo hóa đơn: ${JSON.stringify(req.body.dsSanPham)}`);
+
             const paymentUrl = vnpayService.createPaymentUrl(req, tongTien, hoaDonId.toString());
             res.json({ success: true, paymentUrl });
 
