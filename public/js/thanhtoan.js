@@ -124,7 +124,8 @@ async function submitOrder() {
 
         const danhSachGheGuiDi = selectedSeatsObjects.map(s => ({
             maGhe: s._id,          // ID để Backend khóa ghế
-            tenGhe: s.tenGheNgoi,  // Tên ghế (A1, B2...) để Backend snapshot
+            tenGhe: s.tenGheNgoi,
+            loaiGhe: s.loaiGhe,  // Tên ghế (A1, B2...) để Backend snapshot
             giaGhe: s.giaGheNgoi   // Giá ghế
         }));
         const res = await fetch('/api/ve/dat-ve', {

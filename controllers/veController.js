@@ -26,7 +26,9 @@ class VeController {
                 dsVe = danhSachMaGhe.map(ghe => ({
                     gheNgoiId: ghe.maGhe,       // ID để quản lý
                     tenGheNgoi: ghe.tenGhe,    // Snapshot tên ghế (A1, B2...) để in vé
-                    giaGhe: ghe.giaGhe || 0     // Snapshot giá
+                    giaGhe: ghe.giaGhe || 0,
+                    loaiGhe: ghe.loaiGhe,
+                    suatChieu: maSuatChieu    // Snapshot giá
                 }));
             }
 
