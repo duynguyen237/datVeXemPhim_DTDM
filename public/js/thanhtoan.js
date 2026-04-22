@@ -123,10 +123,10 @@ async function submitOrder() {
         }) : [];
 
         const danhSachGheGuiDi = selectedSeatsObjects.map(s => ({
-            maGhe: s._id,          // ID để Backend khóa ghế
-            tenGhe: s.tenGheNgoi,
-            loaiGhe: s.loaiGhe,  // Tên ghế (A1, B2...) để Backend snapshot
-            giaGhe: s.giaGheNgoi   // Giá ghế
+            maGhe: s._id,          // Để khớp với gheNgoiId ở Backend
+            tenGhe: s.tenGheNgoi,  // Để in vé
+            loaiGhe: s.loaiGhe,    // Snapshot loại ghế (Thường/VIP)
+            giaGhe: s.giaGheNgoi   // Snapshot giá ghế
         }));
         const res = await fetch('/api/ve/dat-ve', {
             method: 'POST',

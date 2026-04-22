@@ -22,13 +22,14 @@ class VeController {
 
             let dsVe = [];
             if (Array.isArray(danhSachMaGhe)) {
-                // Đảm bảo lưu đúng định dạng mảng object
                 dsVe = danhSachMaGhe.map(ghe => ({
-                    gheNgoiId: ghe.maGhe,       // ID để quản lý
-                    tenGheNgoi: ghe.tenGhe,    // Snapshot tên ghế (A1, B2...) để in vé
-                    giaGhe: ghe.giaGhe || 0,
+                    // gheNgoiId là tên trong Schema, ghe.maGhe là tên từ Frontend gửi lên
+                    gheNgoiId: ghe.maGhe,
+                    tenGheNgoi: ghe.tenGhe,
                     loaiGhe: ghe.loaiGhe,
-                    suatChieu: maSuatChieu    // Snapshot giá
+                    giaGhe: ghe.giaGhe || 0,
+                    // CỰC KỲ QUAN TRỌNG: Phải có suatChieu cho từng vé để hết lỗi Validation
+                    suatChieu: maSuatChieu
                 }));
             }
 
