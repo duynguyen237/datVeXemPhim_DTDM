@@ -23,12 +23,10 @@ class VeController {
             let dsVe = [];
             if (Array.isArray(danhSachMaGhe)) {
                 dsVe = danhSachMaGhe.map(ghe => ({
-                    // gheNgoiId là tên trong Schema, ghe.maGhe là tên từ Frontend gửi lên
                     gheNgoiId: ghe.maGhe,
                     tenGheNgoi: ghe.tenGhe,
                     loaiGhe: ghe.loaiGhe,
                     giaGhe: ghe.giaGhe || 0,
-                    // CỰC KỲ QUAN TRỌNG: Phải có suatChieu cho từng vé để hết lỗi Validation
                     suatChieu: maSuatChieu
                 }));
             }
