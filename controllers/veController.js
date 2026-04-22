@@ -23,7 +23,11 @@ class VeController {
             let dsVe = [];
             if (Array.isArray(danhSachMaGhe)) {
                 // Đảm bảo lưu đúng định dạng mảng object
-                dsVe = danhSachMaGhe.map(maGhe => ({ gheNgoiId: maGhe }));
+                dsVe = danhSachMaGhe.map(ghe => ({
+                    gheNgoiId: ghe.maGhe,       // ID để quản lý
+                    tenGheNgoi: ghe.tenGhe,    // Snapshot tên ghế (A1, B2...) để in vé
+                    giaGhe: ghe.giaGhe || 0     // Snapshot giá
+                }));
             }
 
             const hoaDonId = await hoadonDAL.create({
@@ -75,7 +79,7 @@ class VeController {
                 const hoaDon = await HoaDon.findById(hoaDonId);
 
                 if (!hoaDon) {
-                    console.error("❌ Không tìm thấy Hóa đơn trong CSDL!");
+                    console.error("Không tìm thấy Hóa đơn trong CSDL!");
                     return res.render('ketquathanhtoan', { success: false, message: "Hóa đơn không tồn tại." });
                 }
 
@@ -122,7 +126,7 @@ class VeController {
                 res.render('ketquathanhtoan', { success: true, data: thongTinVe });
 
             } else {
-                console.log(`❌ Giao dịch thất bại. Hủy hóa đơn: ${hoaDonId}`);
+                console.log(`Giao dịch thất bại. Hủy hóa đơn: ${hoaDonId}`);
 
                 // Nếu khách hàng hủy thanh toán, xóa luôn hóa đơn nháp đi
                 await HoaDon.findByIdAndDelete(hoaDonId);
@@ -158,6 +162,38 @@ class VeController {
             res.render('lichsu', { lichSu });
         } catch (error) {
             res.status(500).send("Lỗi lấy lịch sử.");
+        }
+    }
+    // Hàm này đặt bên trong class VeController
+    showPrintPage = async (req, res) => {
+        try {
+            const hoaDonId = req.params.id;
+
+            // 1. Tìm hóa đơn và dùng .populate('suatChieu') để lấy thông tin Phim & Phòng
+            const hoaDon = await HoaDon.findById(hoaDonId).populate('suatChieu');
+
+            if (!hoaDon) {
+                return res.status(404).send("Không tìm thấy thông tin hóa đơn để in vé!");
+            }
+
+            // 2. Chuẩn bị dữ liệu để truyền sang file EJS
+            // Bạn cần đảm bảo veXemPhims đã có trường tenGheNgoi (đã snapshot lúc đặt vé)
+            const danhSachVe = hoaDon.veXemPhims.map(ve => ({
+                tenPhim: hoaDon.suatChieu.tenPhim,
+                ngayChieu: hoaDon.suatChieu.ngayChieu,
+                gioBatDau: hoaDon.suatChieu.gioBatDau,
+                tenPhongChieu: hoaDon.suatChieu.tenPhongChieu,
+                tenGheNgoi: ve.tenGheNgoi || 'N/A', // Nếu snapshot bị thiếu sẽ hiện N/A
+                maHoaDon: hoaDon._id,
+                maGiaoDichVNPay: hoaDon.maGiaoDichVNPay || 'Thanh toán trực tuyến'
+            }));
+
+            // 3. Gọi file print_ve.ejs và truyền dữ liệu vào
+            res.render('print_ve', { danhSachVe });
+
+        } catch (error) {
+            console.error("Lỗi khi tải trang in vé:", error);
+            res.status(500).send("Lỗi hệ thống khi tạo dữ liệu in vé.");
         }
     }
 }

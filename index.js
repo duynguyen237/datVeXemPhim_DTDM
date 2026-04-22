@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 1. CẤU HÌNH SESSION DUY NHẤT (QUAN TRỌNG)
 // =========================================================
 app.use(session({
-    secret: 'duy_movie_secret_key_pipipilapy', // Gộp 2 cái secret lại cho chắc
+    secret: 'duy_movie_secret_key_pipipilapy',
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -89,6 +89,15 @@ app.get('/tat-ca-phim', async (req, res) => {
         res.render('tatcaphim', { movies: [] });
     }
 });
+// API Lấy chi tiết hóa đơn
+app.get('/api/hoa-don/chi-tiet/:maHD', async (req, res) => {
+    try {
+        const chiTiet = await hoadonDAL.getDanhSachVeDeIn(req.params.maHD);
+        res.json({ success: !!chiTiet, data: chiTiet });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 // =========================================================
 // 4. API ROUTES & GẮN ROUTERS
@@ -102,15 +111,7 @@ app.use('/api', sanPhamRouter);
 app.use('/admin', adminRouter);
 app.use('/', homeRouter);
 
-// API Lấy chi tiết hóa đơn
-app.get('/api/hoa-don/chi-tiet/:maHD', async (req, res) => {
-    try {
-        const chiTiet = await hoadonDAL.getDanhSachVeDeIn(req.params.maHD);
-        res.json({ success: !!chiTiet, data: chiTiet });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
+
 
 // =========================================================
 // 5. START SERVER & 404 (LUÔN ĐỂ CUỐI CÙNG)

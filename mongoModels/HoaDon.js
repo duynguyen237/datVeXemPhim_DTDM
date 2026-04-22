@@ -30,6 +30,7 @@ const veXemPhimSchema = new mongoose.Schema(
         // Snapshot thông tin ghế để hiển thị trên vé (không cần lookup lại)
         tenGheNgoi: { type: String },
         loaiGhe: { type: String },
+        tenGheNgoi: { type: String },
         giaGhe: { type: Number, default: 0 },
 
         // Ref tới SuatChieu
@@ -104,13 +105,13 @@ const hoaDonSchema = new mongoose.Schema(
             maxlength: 100,
         },
 
-        // ✅ NHÚNG danh sách vé xem phim
+        // NHÚNG danh sách vé xem phim
         veXemPhims: {
             type: [veXemPhimSchema],
             default: [],
         },
 
-        // ✅ NHÚNG danh sách sản phẩm bán kèm
+        // NHÚNG danh sách sản phẩm bán kèm
         chiTietHoaDons: {
             type: [chiTietHoaDonSchema],
             default: [],

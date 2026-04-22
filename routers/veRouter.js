@@ -13,5 +13,7 @@ router.post('/dat-ve', veController.datVe);
 
 // 3. Xử lý khi VNPay quay về
 router.get('/vnpay-return', veController.vnpayReturn);
+//4. Trang in vé sau khi đặt thành công
+router.get('/in-ve/:id', veController.showPrintPage);
 
 module.exports = router;
