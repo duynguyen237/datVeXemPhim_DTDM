@@ -108,7 +108,7 @@ async function submitOrder() {
 
     // Lấy số tiền thực tế đang hiển thị trên giao diện (đã được format)
     // Cách an toàn nhất là dùng biến finalTotalAmount đã tính ở loadOrderDetails
-    
+
     const btn = document.querySelector('button[onclick="submitOrder()"]');
     btn.disabled = true;
 
@@ -122,6 +122,11 @@ async function submitOrder() {
             return { sanPhamId: id, soLuong: parseInt(qty) };
         }) : [];
 
+        const danhSachGheGuiDi = selectedSeatsObjects.map(s => ({
+            maGhe: s._id,          // ID để Backend khóa ghế
+            tenGhe: s.tenGheNgoi,  // Tên ghế (A1, B2...) để Backend snapshot
+            giaGhe: s.giaGheNgoi   // Giá ghế
+        }));
         const res = await fetch('/api/ve/dat-ve', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -129,7 +134,7 @@ async function submitOrder() {
                 maNguoiDung: idNguoiDung,
                 hoTenNguoiDung: hoTenNguoiDung,
                 maSuatChieu: maSC,
-                danhSachMaGhe: ghesStr.split(','),
+                danhSachMaGhe: danhSachGheGuiDi,
                 dsSanPham: dsSanPham, // PHẢI GỬI THÊM CÁI NÀY
                 tongTien: finalTotalAmount // Giá trị này đã bao gồm cả ghế + bắp nước
             })
