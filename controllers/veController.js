@@ -22,13 +22,17 @@ class VeController {
 
             let dsVe = [];
             if (Array.isArray(danhSachMaGhe)) {
-                dsVe = danhSachMaGhe.map(ghe => ({
-                    gheNgoiId: ghe.maGhe,
-                    tenGheNgoi: ghe.tenGhe,
-                    loaiGhe: ghe.loaiGhe,
-                    giaGhe: ghe.giaGhe || 0,
-                    suatChieu: maSuatChieu
-                }));
+                dsVe = danhSachMaGhe.map(ghe => {
+                    console.log("Đang xử lý ghế:", ghe);
+
+                    return {
+                        gheNgoiId: ghe.maGhe || ghe.gheNgoiId || ghe,
+                        tenGheNgoi: ghe.tenGhe || ghe.tenGheNgoi || "N/A",
+                        loaiGhe: ghe.loaiGhe || "Thường",
+                        giaGhe: ghe.giaGhe || 0,
+                        suatChieu: maSuatChieu
+                    };
+                });
             }
 
             const hoaDonId = await hoadonDAL.create({
